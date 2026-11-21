@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Full Stack Developer Career Guide — Interactive</title>
+<meta name="description" content="Interactive classroom presentation: Full Stack Development career guide.">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:#060a18; --ink:#e9edff; --mute:#9fabd6; --dim:#6f7aa8;
+  --line:rgba(255,255,255,.13);
+  --fe:#38bdf8; --be:#a78bfa; --db:#34d399; --pink:#f472b6; --amber:#fbbf24; --red:#fb7185;
+  --r:20px;
+  --font:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --top:56px; --bot:62px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit}
+:focus-visible{outline:2px solid var(--fe);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* animated background */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;
+  background:radial-gradient(1200px 700px at 15% -10%,#1b2a6b 0%,transparent 60%),
+             radial-gradient(900px 600px at 100% 10%,#3b1670 0%,transparent 55%),
+             radial-gradient(900px 700px at 50% 120%,#06403f 0%,transparent 60%),#060a18}
+.bg::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:46px 46px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.35;animation:float 16s ease-in-out infinite}
+.orb.a{width:380px;height:380px;background:var(--fe);top:8%;left:-6%}
+.orb.b{width:340px;height:340px;background:var(--be);top:50%;right:-5%;animation-delay:-5s}
+.orb.c{width:300px;height:300px;background:var(--db);bottom:-8%;left:35%;animation-delay:-9s}
+@keyframes float{50%{transform:translate(40px,-34px) scale(1.12)}}
+
+/* ============ APP CHROME ============ */
+#app{position:relative;z-index:1;height:100dvh;display:grid;grid-template-rows:var(--top) 1fr var(--bot)}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:50;background:linear-gradient(90deg,var(--fe),var(--be),var(--pink));box-shadow:0 0 14px var(--be);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.topbar,.botbar{display:flex;align-items:center;gap:10px;padding:0 clamp(10px,2vw,24px);background:rgba(7,11,28,.55);backdrop-filter:blur(14px);border-color:var(--line)}
+.topbar{border-bottom:1px solid var(--line);justify-content:space-between}
+.botbar{border-top:1px solid var(--line);justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.92rem;letter-spacing:.01em;min-width:0}
+.brand b{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--fe),var(--be));font-size:1rem;flex:none}
+.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tools{display:flex;align-items:center;gap:8px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:38px;height:38px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:.88rem;font-weight:600;transition:.2s}
+.ibtn:hover:not(:disabled){background:rgba(255,255,255,.14);transform:translateY(-1px)}
+.ibtn:disabled{opacity:.3;cursor:not-allowed}
+.ibtn.on{background:linear-gradient(135deg,rgba(56,189,248,.3),rgba(167,139,250,.3));border-color:var(--fe)}
+.score{color:var(--amber);border-color:rgba(251,191,36,.35);font-variant-numeric:tabular-nums}
+.timer{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.82rem}
+.counter{font-family:var(--mono);font-size:.9rem;color:var(--mute);min-width:64px;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:38px}
+.counter b{color:var(--ink);font-size:1.05rem}
+.navbtn{height:42px;padding:0 20px;border-radius:14px;font-weight:700;border:1px solid var(--line);background:rgba(255,255,255,.07);transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.navbtn:hover:not(:disabled){background:linear-gradient(135deg,var(--fe),var(--be));border-color:transparent;transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,.45)}
+.navbtn:disabled{opacity:.3;cursor:not-allowed}
+.mid-tools{display:flex;gap:8px}
+.pulse{animation:ring 2.2s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(251,191,36,.5)}70%{box-shadow:0 0 0 12px rgba(251,191,36,0)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
+
+/* ============ STAGE & SLIDES ============ */
+#stage{position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;
+  padding:clamp(12px,2.2vw,30px) clamp(14px,4vw,60px) 44px;
+  opacity:0;visibility:hidden;transform:translateX(var(--tx,0)) scale(var(--sc,1));
+  transition:opacity .5s ease,transform .55s cubic-bezier(.2,.8,.2,1),visibility 0s .55s;scrollbar-width:thin}
+.slide.active{opacity:1;visibility:visible;--tx:0px;--sc:1;transition:opacity .5s ease,transform .55s cubic-bezier(.2,.8,.2,1),visibility 0s}
+.slide.notrans{transition:none!important}
+.wrap{width:100%;max-width:1240px;margin:auto}
+.foot{position:absolute;left:clamp(14px,4vw,60px);right:clamp(14px,4vw,60px);bottom:12px;display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);letter-spacing:.06em;pointer-events:none}
+.slide .wrap{padding-bottom:22px}
+
+/* entrance animation */
+.slide.active .rise{animation:rise .75s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 90ms + 120ms)}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ============ TYPOGRAPHY ============ */
+.kicker{font-family:var(--mono);font-size:clamp(.72rem,1.1vw,.86rem);letter-spacing:.2em;color:var(--c,var(--fe));text-transform:uppercase;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:28px;height:2px;background:var(--c,var(--fe));border-radius:2px}
+.title{font-size:clamp(1.7rem,3.7vw,3.1rem);line-height:1.08;font-weight:800;letter-spacing:-.025em}
+.mega{font-size:clamp(2.2rem,5.6vw,4.7rem);line-height:1.02;font-weight:900;letter-spacing:-.035em}
+.lead{font-size:clamp(.98rem,1.5vw,1.2rem);color:var(--mute);line-height:1.55;margin-top:12px;max-width:62ch}
+.grad{background:linear-gradient(100deg,var(--fe),var(--be) 50%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+h3{font-size:clamp(1.05rem,1.7vw,1.35rem);font-weight:750;letter-spacing:-.01em}
+.sm{font-size:.92rem;color:var(--mute);line-height:1.5}
+.lbl{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--c,var(--fe));font-weight:700}
+.sec-head{margin-bottom:clamp(16px,2.6vw,30px)}
+
+/* ============ CLICKABLES ============ */
+.glass{background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(14px);box-shadow:0 12px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.1);position:relative}
+.click{cursor:pointer;position:relative;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,border-color .25s,background .25s;-webkit-tap-highlight-color:transparent}
+.click:hover,.click:focus-visible{transform:translateY(-5px);border-color:var(--c,var(--fe));box-shadow:0 16px 46px color-mix(in srgb,var(--c,var(--fe)) 38%,transparent)}
+.click:active{transform:translateY(-1px) scale(.985)}
+.click.glass::after,.click.hint::after{content:"✦";position:absolute;top:10px;right:13px;font-size:.8rem;color:var(--c,var(--fe));opacity:.75;animation:twinkle 2.4s ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.2;transform:scale(.7) rotate(45deg)}}
+.kw{cursor:pointer;color:var(--c,#7dd3fc);font-weight:700;border-bottom:2px dotted currentColor;transition:.2s;white-space:normal}
+.kw:hover,.kw:focus-visible{background:color-mix(in srgb,var(--c,#7dd3fc) 22%,transparent);border-radius:4px}
+.fe{--c:var(--fe)} .be{--c:var(--be)} .db{--c:var(--db)} .pk{--c:var(--pink)} .am{--c:var(--amber)} .rd{--c:var(--red)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:14px;font-weight:700;background:linear-gradient(135deg,var(--c,var(--fe)),color-mix(in srgb,var(--c,var(--fe)) 40%,var(--be)));color:#06101f;box-shadow:0 8px 26px color-mix(in srgb,var(--c,var(--fe)) 40%,transparent);transition:.2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.btn.ghost{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;font-size:.84rem;font-weight:600;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.prompt{display:flex;gap:14px;align-items:center;padding:16px 20px;border-radius:18px;border:1px dashed color-mix(in srgb,var(--c,var(--amber)) 70%,transparent);background:linear-gradient(120deg,color-mix(in srgb,var(--c,var(--amber)) 14%,transparent),transparent);cursor:pointer;text-align:left;width:100%;transition:.25s;position:relative}
+.prompt:hover,.prompt:focus-visible{transform:translateY(-3px);box-shadow:0 14px 40px color-mix(in srgb,var(--c,var(--amber)) 30%,transparent)}
+.prompt .tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;font-weight:800;color:var(--c,var(--amber));white-space:nowrap}
+.prompt .txt{font-size:clamp(.95rem,1.45vw,1.12rem);line-height:1.45}
+.prompt::after{content:"▶";margin-left:auto;font-size:.8rem;color:var(--c,var(--amber));animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(5px)}}
+
+/* flow */
+.flow{display:flex;align-items:stretch;gap:0}
+.flow>.node{flex:1 1 0;min-width:0}
+.arr{flex:0 0 clamp(26px,3.4vw,50px);align-self:center;height:3px;position:relative;color:var(--c,var(--fe));
+  background:repeating-linear-gradient(90deg,currentColor 0 7px,transparent 7px 13px);background-size:26px 3px;animation:dash 1s linear infinite;opacity:.9}
+.arr::after{content:"";position:absolute;right:-3px;top:-5px;border:6px solid transparent;border-left:10px solid currentColor;border-right:0}
+@keyframes dash{to{background-position:26px 0}}
+.node{--c:var(--fe);transition:.35s}
+.node.lit{border-color:var(--c)!important;box-shadow:0 0 0 2px var(--c),0 0 46px color-mix(in srgb,var(--c) 55%,transparent)!important;transform:translateY(-6px) scale(1.03)}
+.num{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;font-family:var(--mono);font-weight:800;background:color-mix(in srgb,var(--c,var(--fe)) 22%,transparent);color:var(--c,var(--fe));border:1px solid color-mix(in srgb,var(--c,var(--fe)) 60%,transparent)}
+.emo{font-size:1.9rem;line-height:1}
+
+/* ============ MODAL ============ */
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:clamp(10px,3vw,30px);background:rgba(3,6,18,.72);backdrop-filter:blur(8px);opacity:0;transition:opacity .25s}
+.modal[hidden]{display:none}
+.modal.open{opacity:1}
+.m-card{position:relative;width:min(680px,100%);max-height:min(88dvh,820px);overflow-y:auto;border-radius:26px;padding:clamp(20px,3.2vw,34px);
+  background:linear-gradient(160deg,rgba(30,40,92,.96),rgba(14,18,48,.97));border:1px solid color-mix(in srgb,var(--c,var(--fe)) 55%,transparent);
+  box-shadow:0 30px 90px rgba(0,0,0,.65),0 0 70px color-mix(in srgb,var(--c,var(--fe)) 28%,transparent);
+  transform:translateY(30px) scale(.94);opacity:0;transition:transform .35s cubic-bezier(.2,.9,.25,1.15),opacity .25s;scrollbar-width:thin;outline:none}
+.modal.open .m-card{transform:none;opacity:1}
+.m-card.wide{width:min(1100px,100%)}
+.m-card::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;border-radius:26px 26px 0 0;background:linear-gradient(90deg,var(--c,var(--fe)),var(--be),var(--pink))}
+.m-close{position:sticky;float:right;top:0;margin:-12px -12px 0 8px;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid var(--line);font-size:1.05rem;z-index:2;transition:.2s}
+.m-close:hover{background:var(--red);transform:rotate(90deg)}
+.m-head{display:flex;gap:16px;align-items:center;margin-bottom:16px;padding-right:44px}
+.m-ico{flex:none;display:grid;place-items:center;width:62px;height:62px;border-radius:20px;font-size:2rem;background:color-mix(in srgb,var(--c,var(--fe)) 22%,transparent);border:1px solid color-mix(in srgb,var(--c,var(--fe)) 55%,transparent)}
+.m-tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--c,var(--fe));font-weight:700}
+.m-title{font-size:clamp(1.25rem,2.6vw,1.75rem);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-top:3px}
+.m-sec{margin-top:14px;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid var(--line);line-height:1.6;font-size:.98rem}
+.m-sec h4{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;color:var(--c,var(--fe));font-family:var(--mono)}
+.m-sec ul{padding-left:1.15rem;display:grid;gap:5px}
+.m-sec.fact{background:linear-gradient(120deg,rgba(251,191,36,.16),rgba(244,114,182,.1));border-color:rgba(251,191,36,.4);--c:var(--amber)}
+.m-sec.ex{background:linear-gradient(120deg,rgba(52,211,153,.14),rgba(56,189,248,.08));border-color:rgba(52,211,153,.4);--c:var(--db)}
+pre.code,.code{font-family:var(--mono);font-size:.84rem;background:#050816;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:8px;overflow-x:auto;color:#a5f3fc;white-space:pre;line-height:1.55}
+.tabs{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.tab{padding:8px 16px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-weight:700;font-size:.9rem;transition:.2s}
+.tab[aria-selected=true]{background:linear-gradient(135deg,var(--c,var(--fe)),var(--be));color:#06101f;border-color:transparent}
+.reveal-btn{margin-top:14px;width:100%;padding:13px;border-radius:14px;border:1px dashed var(--amber);color:var(--amber);font-weight:700;background:rgba(251,191,36,.07);transition:.2s}
+.reveal-btn:hover{background:rgba(251,191,36,.16)}
+.reveal-box{margin-top:10px;padding:14px 16px;border-radius:14px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.4);line-height:1.6;animation:rise .4s both}
+.reveal-box[hidden]{display:none}
+
+/* quiz */
+.qz{margin-top:16px}
+.qz-top{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;color:var(--mute);margin-bottom:10px}
+.qz-bar{height:5px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:14px}
+.qz-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--fe),var(--pink));transition:width .4s}
+.qz-q{font-size:1.12rem;font-weight:700;line-height:1.4;margin-bottom:12px}
+.qz-opts{display:grid;gap:9px}
+.qz-opt{display:flex;gap:12px;align-items:center;text-align:left;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.06);transition:.2s;line-height:1.35}
+.qz-opt:hover:not(:disabled){border-color:var(--fe);background:rgba(56,189,248,.12);transform:translateX(4px)}
+.qz-opt b{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.12);font-family:var(--mono);font-size:.8rem}
+.qz-opt:disabled{cursor:default}
+.qz-opt.ok{background:rgba(52,211,153,.22);border-color:var(--db)}
+.qz-opt.bad{background:rgba(251,113,133,.2);border-color:var(--red);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.qz-why{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.07);line-height:1.55;animation:rise .35s both}
+.qz-why[hidden]{display:none}
+.qz-next{margin-top:12px;display:flex;justify-content:flex-end}
+.qz-done{text-align:center;padding:10px 0}
+.qz-done .big{font-size:3.4rem}
+.qz-done h3{margin:6px 0}
+
+/* demo bits inside modal */
+.demo-form{display:grid;gap:10px;margin-top:12px}
+.inp{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);width:100%}
+.inp:focus{outline:2px solid var(--fe);border-color:transparent}
+.greet{padding:14px;border-radius:14px;background:rgba(52,211,153,.16);border:1px solid var(--db);font-weight:700;font-size:1.1rem;animation:rise .4s both}
+.poll-row{display:grid;grid-template-columns:110px 1fr 36px;gap:10px;align-items:center;margin-top:10px}
+.poll-bar{height:16px;border-radius:10px;background:rgba(255,255,255,.1);overflow:hidden}
+.poll-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--c),var(--pink));transition:width .5s}
+
+/* overview */
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:16px}
+.ov-card{padding:14px;border-radius:16px;text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.06);transition:.2s;display:grid;gap:6px;min-height:104px;align-content:start}
+.ov-card:hover{background:rgba(56,189,248,.14);border-color:var(--fe);transform:translateY(-3px)}
+.ov-card.cur{border-color:var(--amber);box-shadow:0 0 0 2px rgba(251,191,36,.4)}
+.ov-card .n{font-family:var(--mono);font-size:.72rem;color:var(--fe);letter-spacing:.14em}
+.ov-card .t{font-size:.92rem;font-weight:650;line-height:1.3}
+kbd{font-family:var(--mono);font-size:.8rem;padding:2px 8px;border-radius:7px;background:rgba(255,255,255,.14);border:1px solid var(--line);border-bottom-width:3px}
+
+/* toast + confetti */
+#toast{position:fixed;left:50%;bottom:86px;transform:translate(-50%,20px);padding:10px 18px;border-radius:14px;background:rgba(10,14,36,.95);border:1px solid var(--amber);color:var(--amber);font-weight:700;opacity:0;pointer-events:none;transition:.35s;z-index:120}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#confetti{position:fixed;inset:0;z-index:130;pointer-events:none}
+
+/* ============ SLIDE 1 : HERO ============ */
+.s1 .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(20px,4vw,60px);align-items:center}
+.s1 .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+.s1 .pill.click{--c:var(--fe);padding-right:30px}
+.s1 .sep{color:var(--dim)}
+.stack3d{perspective:1100px;display:grid;gap:0;justify-items:center}
+.layer{width:min(430px,100%);padding:18px 22px;border-radius:20px;margin-top:-6px;transform:rotateX(52deg) rotateZ(-8deg) translateZ(0);transform-origin:center;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--c) 40%,#0b1030),color-mix(in srgb,var(--c) 12%,#0b1030));border:1px solid var(--c);box-shadow:0 22px 40px rgba(0,0,0,.5),0 0 40px color-mix(in srgb,var(--c) 30%,transparent);
+  display:flex;gap:16px;align-items:center;text-align:left;transition:.4s cubic-bezier(.2,.8,.2,1)}
+.layer:hover,.layer:focus-visible{transform:rotateX(0) rotateZ(0) translateY(-6px) scale(1.04);z-index:3}
+.layer .emo{font-size:2.3rem}
+.layer b{display:block;font-family:var(--mono);letter-spacing:.14em;font-size:.92rem;color:var(--c)}
+.layer span{font-size:.95rem;color:#dbe4ff}
+.stack3d:hover .layer:not(:hover){opacity:.7}
+
+/* ============ SLIDE 2 ============ */
+.s2 .apps{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.s2 .three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.flip{perspective:900px;min-height:210px;cursor:pointer;border:0;background:none;text-align:left;--c:var(--fe)}
+.flip-in{position:relative;width:100%;height:100%;min-height:210px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.flip.flipped .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);
+  background:linear-gradient(160deg,color-mix(in srgb,var(--c) 26%,#0d1233),rgba(255,255,255,.03));box-shadow:0 12px 36px rgba(0,0,0,.35)}
+.face.back{transform:rotateY(180deg);background:linear-gradient(160deg,color-mix(in srgb,var(--c) 45%,#0a0f2c),color-mix(in srgb,var(--c) 12%,#0a0f2c));border-color:var(--c);font-size:.95rem;line-height:1.5;justify-content:center}
+.flip:hover .face,.flip:focus-visible .face{border-color:var(--c)}
+.face .ghost-num{font-family:var(--mono);font-weight:800;color:var(--c);letter-spacing:.14em;font-size:.82rem}
+.face h3{font-size:1.25rem}
+.face .hintline{margin-top:auto;font-size:.72rem;font-family:var(--mono);color:var(--c);letter-spacing:.12em}
+.s2 .swiggy{margin-top:24px;padding:18px 20px}
+.s2 .swiggy .head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.s2 .sw-step{padding:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.06);text-align:left;display:grid;gap:4px}
+.s2 .sw-step .lbl{color:var(--c)}
+.s2 .sw-step h3{font-size:1.1rem}
+
+/* ============ SLIDE 3 ============ */
+.s3 .journey{margin:26px 0 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.s3 .journey .arr{display:none}
+.s3 .stop{padding:20px 16px;text-align:center;display:grid;gap:8px;justify-items:center;--c:var(--fe)}
+.s3 .stop:nth-child(2){--c:var(--be)} .s3 .stop:nth-child(3){--c:var(--pink)} .s3 .stop:nth-child(4){--c:var(--db)}
+.s3 .track{position:relative;height:6px;margin:0 12.5%;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden}
+.s3 .track i{position:absolute;inset:0;width:0;background:linear-gradient(90deg,var(--fe),var(--be),var(--pink),var(--db));border-radius:6px}
+.s3 .track.run i{animation:fillbar 3.2s linear forwards}
+@keyframes fillbar{to{width:100%}}
+.s3 .phone{display:grid;place-items:center;margin-bottom:6px}
+.s3 .gap{height:16px}
+
+/* ============ SLIDE 4 ============ */
+.s4 .wheel{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:24px 0 22px;position:relative}
+.s4 .wheel::before{content:"";position:absolute;left:6%;right:6%;top:50%;height:3px;background:linear-gradient(90deg,var(--fe),var(--be),var(--pink),var(--db));opacity:.45;z-index:0}
+.s4 .step{padding:22px 16px;text-align:center;display:grid;gap:8px;justify-items:center;position:relative;z-index:1;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 22%,#0c1130),rgba(255,255,255,.03))}
+.s4 .step:nth-child(1){--c:var(--fe)} .s4 .step:nth-child(2){--c:var(--be)} .s4 .step:nth-child(3){--c:var(--amber)} .s4 .step:nth-child(4){--c:var(--db)}
+.s4 .step .ring{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;font-size:2.2rem;background:radial-gradient(circle,color-mix(in srgb,var(--c) 40%,transparent),transparent 70%);border:2px solid var(--c);animation:spin3 9s linear infinite}
+.s4 .step .ring span{animation:unspin 9s linear infinite;display:block}
+@keyframes spin3{to{transform:rotate(360deg)}}
+@keyframes unspin{to{transform:rotate(-360deg)}}
+.s4 .step .ring{border-style:dashed}
+
+/* ============ SLIDE 5 : BENTO ============ */
+.s5 .bento{display:grid;grid-template-columns:1.4fr 1fr 1fr;grid-template-rows:auto auto;gap:16px;margin-top:20px}
+.s5 .bento .xc{padding:22px;display:flex;flex-direction:column;gap:8px;text-align:left;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 22%,#0c1130),rgba(255,255,255,.03))}
+.s5 .bento .xc:nth-child(1){grid-row:span 2;--c:var(--fe);justify-content:flex-start}
+.s5 .bento .xc:nth-child(2){--c:var(--be)} .s5 .bento .xc:nth-child(3){--c:var(--pink)} .s5 .bento .xc:nth-child(4){--c:var(--db);grid-column:2/4}
+.s5 .xc .more{max-height:0;opacity:0;overflow:hidden;transition:max-height .5s ease,opacity .4s,margin .4s;font-size:.93rem;line-height:1.5;color:#dbe6ff;border-left:3px solid var(--c);padding-left:12px}
+.s5 .xc.open .more{max-height:200px;opacity:1;margin-top:8px}
+.s5 .xc .arrowdown{margin-top:auto;font-size:.7rem;font-family:var(--mono);color:var(--c);letter-spacing:.12em}
+.s5 .xc.open .arrowdown{opacity:.5}
+.s5 .xc .big{font-size:2.6rem}
+.s5 .quote{margin-top:18px;padding:20px 24px;border-radius:20px;border:1px solid var(--amber);background:linear-gradient(120deg,rgba(251,191,36,.16),rgba(244,114,182,.08));display:flex;gap:16px;align-items:center;width:100%;text-align:left;cursor:pointer;--c:var(--amber);transition:.25s}
+.s5 .quote:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(251,191,36,.25)}
+.s5 .quote .t{font-size:clamp(1rem,1.7vw,1.3rem);font-weight:650;line-height:1.4}
+.s5 .quote .lbl{color:var(--amber);white-space:nowrap}
+
+/* ============ SLIDE 6 : BROWSER ============ */
+.s6 .browser{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#0a0f28;box-shadow:0 24px 60px rgba(0,0,0,.5);margin-top:18px}
+.s6 .bar{display:flex;gap:7px;align-items:center;padding:11px 14px;background:rgba(255,255,255,.07);border-bottom:1px solid var(--line)}
+.s6 .bar i{width:11px;height:11px;border-radius:50%;background:#fb7185} .s6 .bar i:nth-child(2){background:#fbbf24} .s6 .bar i:nth-child(3){background:#34d399}
+.s6 .bar u{flex:1;margin-left:10px;height:24px;border-radius:12px;background:rgba(255,255,255,.08);text-decoration:none;font-family:var(--mono);font-size:.74rem;color:var(--mute);display:flex;align-items:center;padding:0 12px}
+.s6 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:18px}
+.s6 .tile{padding:18px 16px;display:grid;gap:6px;text-align:left;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 26%,#0c1130),rgba(255,255,255,.02))}
+.s6 .tile:nth-child(1){--c:#fb923c} .s6 .tile:nth-child(2){--c:var(--fe)} .s6 .tile:nth-child(3){--c:var(--amber)} .s6 .tile:nth-child(4){--c:#22d3ee}
+.s6 .tile .emo{font-size:2.2rem}
+.s6 .tile h3{font-size:1.25rem}
+.s6 .demo{margin-top:16px}
+
+/* ============ SLIDE 7 ============ */
+.s7 .split{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;margin-top:20px}
+.s7 .backs{display:grid;gap:16px}
+.s7 .bk{padding:20px;display:flex;gap:16px;align-items:flex-start;text-align:left;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 22%,#0c1130),rgba(255,255,255,.03))}
+.s7 .bk .emo{font-size:2.4rem}
+.s7 .dbcard{padding:22px;text-align:left;display:flex;flex-direction:column;gap:10px;align-items:flex-start;background:linear-gradient(160deg,color-mix(in srgb,var(--db) 28%,#0c1130),rgba(255,255,255,.02))}
+.cyl{width:90px;height:100px;position:relative;margin:4px 0 6px}
+.cyl i{position:absolute;left:0;right:0;height:30px;border-radius:50%;border:2px solid var(--db);background:#0b2a2a}
+.cyl i:nth-child(1){top:0;background:radial-gradient(circle at 40% 40%,#34d39966,#0b2a2a)} .cyl i:nth-child(2){top:26px;border-top-color:transparent} .cyl i:nth-child(3){top:52px;border-top-color:transparent} .cyl i:nth-child(4){top:70px}
+.s7 .dbcard:hover .cyl{animation:bob 1s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.s7 .demo7{margin-top:18px}
+
+/* ============ SLIDE 8 ============ */
+.s8 .seq{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:22px;align-items:stretch}
+.s8 .sn{padding:18px 12px;text-align:center;display:grid;gap:6px;justify-items:center;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 24%,#0c1130),rgba(255,255,255,.03))}
+.s8 .seq>.node:nth-of-type(1){--c:var(--fe)} .s8 .seq>.node:nth-of-type(2){--c:#22d3ee} .s8 .seq>.node:nth-of-type(3){--c:var(--be)} .s8 .seq>.node:nth-of-type(4){--c:var(--db)} .s8 .seq>.node:nth-of-type(5){--c:var(--pink)}
+.s8 .seq .arr{display:none}
+.s8 .packet{height:34px;position:relative;margin-top:8px}
+.s8 .packet::before{content:"";position:absolute;left:10%;right:10%;top:16px;height:3px;background:repeating-linear-gradient(90deg,var(--fe) 0 7px,transparent 7px 13px);background-size:26px 3px;animation:dash 1s linear infinite;opacity:.8}
+.s8 .packet span{position:absolute;top:2px;left:10%;font-size:1.5rem;opacity:0}
+.s8 .packet.run span{animation:travel 4.4s linear forwards}
+@keyframes travel{0%{left:8%;opacity:1}100%{left:88%;opacity:1}}
+.s8 .ask{margin-top:18px}
+
+/* ============ SLIDE 9 : PYRAMID ============ */
+.s9 .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start;margin-top:18px}
+.s9 .pyr{display:flex;flex-direction:column-reverse;align-items:center;gap:8px}
+.s9 .lv{padding:18px 20px;text-align:center;display:grid;gap:3px;justify-items:center;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 30%,#0c1130),color-mix(in srgb,var(--c) 8%,#0c1130));border-radius:18px}
+.s9 .lv:nth-child(1){--c:var(--db);width:100%} .s9 .lv:nth-child(2){--c:var(--amber);width:78%} .s9 .lv:nth-child(3){--c:var(--pink);width:56%}
+.s9 .lv h3{font-size:1.4rem}
+.s9 .side{display:grid;gap:16px}
+
+/* ============ SLIDE 10 : SDLC ============ */
+.s10 .cycle{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:22px;position:relative}
+.s10 .ph{padding:14px 8px 16px;text-align:center;display:grid;gap:4px;justify-items:center;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 26%,#0c1130),rgba(255,255,255,.02))}
+.s10 .ph h3{font-size:1rem}
+.s10 .ph .sm{font-size:.8rem}
+.s10 .ph .num{width:36px;height:36px;border-radius:50%}
+.s10 .ph:nth-child(1){--c:#38bdf8}.s10 .ph:nth-child(2){--c:#60a5fa}.s10 .ph:nth-child(3){--c:#a78bfa}.s10 .ph:nth-child(4){--c:#f472b6}.s10 .ph:nth-child(5){--c:#fbbf24}.s10 .ph:nth-child(6){--c:#34d399}.s10 .ph:nth-child(7){--c:#22d3ee}
+.s10 .loop{margin-top:14px;display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:16px;border:1px dashed var(--fe);background:rgba(56,189,248,.08);cursor:pointer;text-align:left;width:100%;transition:.25s}
+.s10 .loop:hover{background:rgba(56,189,248,.18)}
+.s10 .loop .spin{font-size:1.7rem;animation:spin3 5s linear infinite;display:inline-block}
+.s10 .disc{margin-top:16px}
+
+/* ============ SLIDE 11 : ROADMAP ============ */
+.s11 .road{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:26px;align-items:end}
+.s11 .rs{padding:20px 16px;display:grid;gap:7px;text-align:left;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 26%,#0c1130),rgba(255,255,255,.02))}
+.s11 .rs:nth-child(1){--c:var(--fe);margin-bottom:0}.s11 .rs:nth-child(2){--c:var(--be);margin-bottom:28px}.s11 .rs:nth-child(3){--c:var(--pink);margin-bottom:56px}.s11 .rs:nth-child(4){--c:var(--db);margin-bottom:84px}
+.s11 .rs .emo{font-size:2.2rem}
+.s11 .signals{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:16px 20px}
+.s11 .signals .plus{color:var(--dim);font-weight:800}
+
+/* ============ SLIDE 12 : JOB CARD ============ */
+.s12 .job{display:grid;grid-template-columns:1fr 1.1fr;gap:16px;margin-top:14px}
+.s12 .jc{padding:20px}
+.s12 .head{display:flex;gap:16px;align-items:center;margin-bottom:12px}
+.s12 .logo{width:60px;height:60px;border-radius:16px;display:grid;place-items:center;font-size:1.8rem;background:linear-gradient(135deg,#2563eb,#7c3aed);flex:none}
+.s12 .meta{font-size:.88rem;color:var(--mute);line-height:1.5}
+.s12 ul.resp{list-style:none;display:grid;gap:9px;margin-top:10px}
+.s12 ul.resp li{display:flex;gap:10px;line-height:1.5;font-size:.95rem}
+.s12 ul.resp li::before{content:"✓";color:var(--db);font-weight:800;flex:none}
+.s12 .skills{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.s12 .sk{padding:12px 14px;text-align:left;display:grid;gap:2px;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 22%,#0c1130),rgba(255,255,255,.02))}
+.s12 .sk b{font-size:1.02rem}
+.s12 .sk span{font-size:.8rem;color:var(--mute);line-height:1.35}
+.s12 .good{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.s12 .note{margin-top:10px;font-size:.76rem;color:var(--dim);font-style:italic;line-height:1.45}
+.s12 .src{font-size:.72rem;letter-spacing:.06em;color:var(--fe);font-family:var(--mono)}
+
+/* ============ SLIDE 13 : GENAI ============ */
+.s13 .why3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+.s13 .wy{padding:26px 22px;text-align:left;display:grid;gap:8px;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 28%,#0c1130),rgba(255,255,255,.02))}
+.s13 .wy:nth-child(1){--c:var(--fe)}.s13 .wy:nth-child(2){--c:var(--be)}.s13 .wy:nth-child(3){--c:var(--pink)}
+.s13 .wy::before{content:"✨";position:absolute;right:-8px;bottom:-14px;font-size:5.5rem;opacity:.12;transition:.4s}
+.s13 .wy:hover::before{opacity:.3;transform:rotate(18deg) scale(1.15)}
+.s13 .take{margin-top:20px;width:100%;padding:22px 24px;border-radius:22px;text-align:left;display:flex;gap:18px;align-items:center;border:1px solid transparent;background:linear-gradient(#0d1233,#0d1233) padding-box,linear-gradient(100deg,var(--fe),var(--be),var(--pink)) border-box;cursor:pointer;transition:.25s}
+.s13 .take:hover{transform:translateY(-3px);box-shadow:0 16px 50px rgba(167,139,250,.35)}
+.s13 .take .t{font-size:clamp(1.05rem,2vw,1.5rem);font-weight:750}
+
+/* ============ SLIDE 14 : VS ============ */
+.s14 .vs{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px;position:relative}
+.s14 .vs::after{content:"+";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,var(--fe),var(--be));color:#06101f;z-index:2;box-shadow:0 0 30px var(--be)}
+.s14 .pan{padding:22px;display:grid;gap:10px;align-content:start;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 22%,#0c1130),rgba(255,255,255,.02))}
+.s14 .pan.dk{--c:#38bdf8}.s14 .pan.aw{--c:#fb923c}
+.s14 .pan h3{font-size:1.6rem;display:flex;gap:10px;align-items:center;cursor:pointer;width:fit-content}
+.s14 .acc{display:grid;gap:8px;margin-top:4px}
+.s14 .ai{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.06);overflow:hidden;transition:.25s}
+.s14 .ai:hover,.s14 .ai.open{border-color:var(--c)}
+.s14 .ai>button{display:flex;gap:10px;width:100%;text-align:left;padding:12px 14px;font-weight:650;align-items:center}
+.s14 .ai>button::before{content:"✔";color:var(--c)}
+.s14 .ai>button::after{content:"＋";margin-left:auto;color:var(--c);transition:.3s;font-weight:800}
+.s14 .ai.open>button::after{transform:rotate(45deg)}
+.s14 .ai .ex{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 14px 0 38px;color:#cfe0ff;font-size:.92rem;line-height:1.5}
+.s14 .ai.open .ex{max-height:120px;padding-bottom:12px}
+.s14 .tog{margin-top:20px;width:100%;padding:20px 24px;border-radius:20px;border:1px solid var(--db);background:linear-gradient(120deg,rgba(52,211,153,.16),rgba(56,189,248,.1));display:flex;gap:16px;align-items:center;text-align:left;cursor:pointer;--c:var(--db);transition:.25s}
+.s14 .tog:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(52,211,153,.28)}
+.s14 .tog .t{font-size:clamp(1rem,1.8vw,1.35rem);font-weight:750}
+
+/* ============ SLIDE 15 : CHART ============ */
+.s15 .chart{margin-top:18px;padding:22px 22px 14px}
+.s15 .row{display:grid;grid-template-columns:minmax(150px,230px) 1fr;gap:16px;align-items:center;padding:9px 0;text-align:left;width:100%;border-radius:14px;transition:.2s}
+.s15 .row:hover,.s15 .row:focus-visible{background:rgba(255,255,255,.07)}
+.s15 .row h3{font-size:1rem}
+.s15 .row .rng{font-family:var(--mono);color:var(--c);font-weight:700;font-size:.92rem}
+.s15 .plot{position:relative;height:34px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.1) 0 1px,transparent 1px calc(100%/6));border-right:1px solid rgba(255,255,255,.1);border-radius:6px}
+.s15 .bar{position:absolute;top:5px;bottom:5px;border-radius:9px;background:linear-gradient(90deg,var(--c),color-mix(in srgb,var(--c) 50%,#fff));transform-origin:left;transform:scaleX(0);box-shadow:0 0 22px color-mix(in srgb,var(--c) 55%,transparent)}
+.s15.active .bar{transform:scaleX(1);transition:transform 1s cubic-bezier(.2,.8,.2,1) calc(var(--i,0) * 160ms + 500ms)}
+.s15 .bar.open-end{border-radius:9px 0 0 9px;mask-image:linear-gradient(90deg,#000 70%,transparent)}
+.s15 .axis{display:grid;grid-template-columns:minmax(150px,230px) 1fr;gap:16px;margin-top:6px}
+.s15 .ticks{position:relative;height:22px;font-family:var(--mono);font-size:.76rem;color:var(--mute)}
+.s15 .ticks span{position:absolute;transform:translateX(-50%)}
+.s15 .ticks span:last-child{transform:translateX(-100%)}
+.s15 .ticks span:first-child{transform:none}
+.s15 .lpa{justify-self:start;margin-top:4px}
+.s15 .focus{margin-top:16px}
+
+/* ============ SLIDE 16/17 ============ */
+.s16 .mcq{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:20px}
+.s16 .qbox{padding:20px 24px;margin-top:20px;font-size:clamp(1.1rem,2vw,1.55rem);font-weight:700;line-height:1.35;border-left:5px solid var(--amber)}
+.s16 .opt{display:flex;gap:16px;align-items:center;padding:18px 20px;text-align:left;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.06);transition:.25s;font-size:1.15rem;font-weight:700;cursor:pointer}
+.s16 .opt .letter{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;font-family:var(--mono);font-weight:900;background:rgba(255,255,255,.12);flex:none}
+.s16 .opt:hover{border-color:var(--fe);transform:translateY(-3px)}
+.s16 .opt.sel{border-color:var(--fe);background:rgba(56,189,248,.18);box-shadow:0 0 0 2px var(--fe)}
+.s16 .opt.sel .letter{background:var(--fe);color:#06101f}
+.s16 .opt.ok{border-color:var(--db);background:rgba(52,211,153,.24);box-shadow:0 0 0 2px var(--db);animation:pop .5s}
+.s16 .opt.ok .letter{background:var(--db);color:#06101f}
+.s16 .opt.bad{border-color:var(--red);background:rgba(251,113,133,.2);box-shadow:0 0 0 2px var(--red);animation:shake .4s}
+.s16 .opt.bad .letter{background:var(--red);color:#06101f}
+@keyframes pop{50%{transform:scale(1.05)}}
+.s16 .actions{display:flex;gap:12px;align-items:center;margin-top:22px;flex-wrap:wrap}
+.s16 .status{color:var(--mute);font-size:.92rem}
+.s17 .answer{display:flex;gap:18px;align-items:center;padding:6px 0}
+.s17 .check{font-size:3.4rem;animation:pop .8s}
+.s17 .lay{display:grid;gap:0;margin-top:22px}
+.s17 .lay .ly{padding:18px 22px;display:flex;gap:18px;align-items:center;text-align:left;background:linear-gradient(120deg,color-mix(in srgb,var(--c) 26%,#0c1130),rgba(255,255,255,.02))}
+.s17 .lay .ly.win{box-shadow:0 0 0 2px var(--db),0 0 50px rgba(52,211,153,.4)}
+.s17 .lay .hand{display:grid;place-items:center;height:30px;color:var(--mute);font-size:1.3rem;animation:nudge 1.4s ease-in-out infinite;transform-origin:center}
+.s17 .lay .hand{animation:bounce 1.4s ease-in-out infinite}
+@keyframes bounce{50%{transform:translateY(5px)}}
+.s17 .lay h3{font-size:1.35rem}
+.s17 .takes{margin-top:20px}
+
+/* ============ SLIDE 18 : NEXT STEP ============ */
+.s18 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;counter-reset:st}
+.s18 .st{padding:24px 20px;text-align:left;display:grid;gap:8px;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 26%,#0c1130),rgba(255,255,255,.02))}
+.s18 .st:nth-child(1){--c:var(--fe)}.s18 .st:nth-child(2){--c:var(--be)}.s18 .st:nth-child(3){--c:var(--db)}
+.s18 .st .big{font-family:var(--mono);font-size:3.4rem;font-weight:900;color:color-mix(in srgb,var(--c) 70%,transparent);line-height:1}
+.s18 .st:not(:last-child)::before{content:"➜";position:absolute;right:-22px;top:50%;font-size:1.7rem;color:var(--c);z-index:3;animation:nudge 1.5s ease-in-out infinite}
+.s18 .qs{margin-top:22px}
+
+/* ============ SLIDE 19 : FINALE ============ */
+.s19 .fin{text-align:center;display:grid;gap:14px;justify-items:center;padding:10px 0}
+.s19 .mega{font-size:clamp(2rem,5vw,4rem)}
+.s19 .words{display:flex;gap:clamp(12px,3vw,34px);flex-wrap:wrap;justify-content:center;margin:14px 0 6px}
+.s19 .word{font-size:clamp(1.8rem,5.2vw,4.2rem);font-weight:900;letter-spacing:.04em;padding:14px clamp(16px,3vw,34px);border-radius:24px;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 28%,#0c1130),rgba(255,255,255,.02));color:var(--c);text-shadow:0 0 30px var(--c)}
+.s19 .word:nth-child(1){--c:var(--fe)}.s19 .word:nth-child(2){--c:var(--be)}.s19 .word:nth-child(3){--c:var(--db)}
+.s19 .thanks{font-size:clamp(1.6rem,3.6vw,2.8rem);font-weight:800;padding:12px 30px;border-radius:999px;border:1px solid var(--pink);background:linear-gradient(120deg,rgba(244,114,182,.2),rgba(167,139,250,.2));margin-top:12px;transition:.25s;cursor:pointer}
+.s19 .thanks:hover{transform:scale(1.06) rotate(-1.5deg);box-shadow:0 0 50px rgba(244,114,182,.5)}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1000px){
+  .s1 .hero,.s7 .split,.s9 .layout,.s12 .job{grid-template-columns:1fr}
+  .s10 .cycle{grid-template-columns:repeat(4,1fr)}
+  .s6 .tiles{grid-template-columns:repeat(2,1fr)}
+  .s5 .bento{grid-template-columns:1fr 1fr}
+  .s5 .bento .xc:nth-child(1){grid-row:auto;grid-column:1/3}
+  .s5 .bento .xc:nth-child(4){grid-column:auto}
+  .s11 .road{grid-template-columns:repeat(2,1fr)}
+  .s11 .rs{margin-bottom:0!important}
+}
+@media (max-width:760px){
+  :root{--top:52px;--bot:58px}
+  .brand span,.hide-sm,.navbtn .t{display:none}
+  .navbtn{padding:0 14px}
+  .s2 .three,.s13 .why3,.s14 .vs,.s16 .mcq,.s18 .steps,.s12 .skills{grid-template-columns:1fr}
+  .s3 .journey,.s4 .wheel,.s8 .seq{grid-template-columns:1fr;gap:12px}
+  .s3 .track{display:none}
+  .s4 .wheel::before{display:none}
+  .s10 .cycle{grid-template-columns:repeat(2,1fr)}
+  .s5 .bento{grid-template-columns:1fr}
+  .s5 .bento .xc:nth-child(1){grid-column:auto}
+  .s6 .tiles{grid-template-columns:1fr}
+  .s11 .road{grid-template-columns:1fr}
+  .s14 .vs::after{display:none}
+  .s15 .row,.s15 .axis{grid-template-columns:1fr;gap:6px}
+  .s15 .axis>span{display:none}
+  .s18 .st:not(:last-child)::before{content:"⬇";right:50%;top:auto;bottom:-24px;transform:translateX(50%)}
+  .s8 .packet{display:none}
+  .layer{transform:none;margin-top:8px}
+  .poll-row{grid-template-columns:80px 1fr 28px}
+  .flip,.flip-in{min-height:190px}
+  .s5 .quote,.s13 .take,.s14 .tog,.prompt{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* short laptop screens (e.g. 1280x720): tighten vertical rhythm so slides fit without scrolling */
+@media (max-height:780px) and (min-width:761px){
+  .slide{padding-top:10px;padding-bottom:40px}
+  .title{font-size:clamp(1.5rem,3vw,2.4rem)} .lead{margin-top:8px;font-size:1rem}
+  .sec-head{margin-bottom:12px} .kicker{margin-bottom:6px}
+  .s2 .three{margin-top:14px} .flip,.flip-in{min-height:160px} .face{padding:14px;gap:3px} .face .emo{font-size:1.5rem}
+  .s2 .swiggy{margin-top:14px;padding:12px 16px} .s2 .swiggy .head{margin-bottom:8px}
+  .s2 .sw-step{padding:10px}
+  .s3 .journey{margin:14px 0 12px} .s3 .stop{padding:14px 12px}
+  .s4 .wheel{margin:14px 0} .s4 .step{padding:14px 12px} .s4 .step .ring{width:60px;height:60px;font-size:1.7rem}
+  .s5 .bento{gap:12px;margin-top:12px} .s5 .bento .xc{padding:16px;gap:5px} .s5 .xc .big{font-size:2rem} .s5 .quote{margin-top:12px;padding:14px 20px}
+  .s6 .tiles{padding:12px;gap:10px} .s6 .tile{padding:12px}
+  .s8 .seq{margin-top:12px} .s8 .sn{padding:12px 8px} .s8 .packet{height:22px;margin-top:2px}
+  .s10 .ph{padding:10px 6px}
+  .s11 .road{margin-top:14px} .s11 .rs{padding:14px 12px}
+  .s13 .why3{margin-top:14px} .s13 .wy{padding:18px}
+  .s14 .vs{margin-top:14px}
+  .s15 .chart{padding:14px 18px 8px;margin-top:10px} .s15 .row{padding:5px 0}
+  .s17 .lay{margin-top:12px} .s17 .lay .ly{padding:12px 20px} .s17 .lay .hand{height:20px} .s17 .takes{margin-top:12px}
+  .s18 .steps{margin-top:14px}
+  .prompt{padding:12px 16px}
+}
+
+/* round-2 fixes */
+.s11 .signals>span:last-child:not(.kw){margin-left:-10px}
+.ibtn{white-space:nowrap}
+.s2 .flip .hintline{margin-top:auto;padding-top:8px}
+@media (max-width:900px),(max-height:500px){ .foot{display:none} }
+@media (max-width:900px){ .hide-sm,.navbtn .t{display:none} .brand span{display:none} }
+.s8 .seq{gap:8px}
+@media (max-width:760px){ .s8 .seq{gap:12px} }
+@media (pointer:coarse){ .kw{padding:6px 2px;margin:-6px -2px;display:inline-block} }
+
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
+<div id="progress" role="progressbar" aria-label="Presentation progress" aria-valuemin="0" aria-valuemax="100"></div>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><b aria-hidden="true">🥞</b><span>Full Stack Developer Career Guide</span></div>
+    <div class="tools">
+      <span class="ibtn score" id="score" title="Quiz points" aria-live="polite">⭐ 0</span>
+      <button class="ibtn timer" id="timerBtn" aria-pressed="false" title="Start / pause timer (T)"><span class="ico" aria-hidden="true">⏱</span><span id="timerTxt">00:00</span></button>
+      <button class="ibtn hide-sm" id="timerReset" title="Reset timer" aria-label="Reset timer">↺</button>
+      <button class="ibtn" id="fsBtn" aria-pressed="false" title="Full screen (F)"><span aria-hidden="true">⛶</span><span class="t hide-sm">Full screen</span></button>
+      <button class="ibtn" id="homeBtn" title="Overview of all slides (O)"><span aria-hidden="true">🧭</span><span class="hide-sm">Overview</span></button>
+      <button class="ibtn" id="helpBtn" title="How to use / shortcuts (?)" aria-label="Help and shortcuts">❔</button>
+    </div>
+  </header>
+
+  <main id="stage" aria-live="off">
+<!-- ===================== SLIDE 1 ===================== -->
+<section class="slide s1" data-title="From idea to working application." data-emoji="🚀" data-quiz="s1" data-fact="1" aria-label="Slide 1">
+  <div class="wrap hero">
+    <div>
+      <div class="kicker rise" style="--i:0">CAREER GUIDE &nbsp;/&nbsp; FULL STACK DEVELOPMENT</div>
+      <h1 class="mega rise" style="--i:1">From idea to <span class="grad">working application.</span></h1>
+      <p class="lead rise" style="--i:2">A practical tour of the people, layers and process behind modern software, and the skills employers look for.</p>
+      <div class="row rise" style="--i:3">
+        <button class="pill click hint" data-modal="m-session" style="--c:var(--amber)">🎮 Interactive session</button>
+        <span class="pill"><span class="kw fe" role="button" tabindex="0" data-modal="m-ask">Ask</span><span class="sep">&nbsp;•&nbsp;</span><span class="kw pk" role="button" tabindex="0" data-modal="m-guess">Guess</span><span class="sep">&nbsp;•&nbsp;</span><span class="kw db" role="button" tabindex="0" data-modal="m-explore">Explore</span></span>
+      </div>
+    </div>
+    <div class="stack3d rise" style="--i:3">
+      <button class="layer click fe" data-modal="m-frontend"><span class="emo">🎨</span><span><b>FRONTEND</b><span>What users see and touch</span></span></button>
+      <button class="layer click be" data-modal="m-backend"><span class="emo">⚙️</span><span><b>BACKEND</b><span>Business logic and APIs</span></span></button>
+      <button class="layer click db" data-modal="m-database"><span class="emo">🗄️</span><span><b>DATABASE</b><span>Data that persists</span></span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 2 ===================== -->
+<section class="slide s2" data-title="Every app you use is a full stack application" data-emoji="📱" data-quiz="s2" data-fact="2" aria-label="Slide 2">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker rise" style="--i:0">01 &nbsp;/&nbsp; START WITH YOUR WORLD</div>
+      <h2 class="title rise" style="--i:1">Every app you use is a <span class="kw" role="button" tabindex="0" data-modal="m-fullstack">full stack</span> application</h2>
+      <p class="lead rise" style="--i:2"><span class="kw" role="button" tabindex="0" data-modal="m-app-instagram" style="--c:var(--pink)">Instagram</span>, <span class="kw" role="button" tabindex="0" data-modal="m-app-whatsapp" style="--c:var(--db)">WhatsApp</span>, <span class="kw" role="button" tabindex="0" data-modal="m-app-youtube" style="--c:var(--red)">YouTube</span>, <span class="kw" role="button" tabindex="0" data-modal="m-app-swiggy" style="--c:#fb923c">Swiggy</span>, <span class="kw" role="button" tabindex="0" data-modal="m-app-maps" style="--c:var(--fe)">Google Maps</span>: pick the app you open every day.</p>
+    </div>
+    <div class="three">
+      <button class="flip rise fe" style="--i:3" data-flip>
+        <div class="flip-in">
+          <div class="face"><span class="ghost-num">01 &nbsp;FRONTEND</span><span class="emo">🎨</span><h3>What you see</h3><p class="sm">Screens, buttons, menus and the overall user experience.</p><span class="hintline">CLICK TO FLIP ↻</span></div>
+          <div class="face back"><b>🎨 Where you see it</b>Instagram’s feed, the heart button and stories are all frontend. The frontend runs on your phone or in your browser.<span class="hintline">CLICK TO FLIP BACK ↻</span></div>
+        </div>
+      </button>
+      <button class="flip rise be" style="--i:4" data-flip>
+        <div class="flip-in">
+          <div class="face"><span class="ghost-num">02 &nbsp;BACKEND + APIS</span><span class="emo">⚙️</span><h3>What happens behind the screen</h3><p class="sm">Login, recommendations, orders and business logic.</p><span class="hintline">CLICK TO FLIP ↻</span></div>
+          <div class="face back"><b>⚙️ Where you see it</b>When Instagram picks which posts to show you, or YouTube suggests your next video, a backend server made that decision.<span class="hintline">CLICK TO FLIP BACK ↻</span></div>
+        </div>
+      </button>
+      <button class="flip rise db" style="--i:5" data-flip>
+        <div class="flip-in">
+          <div class="face"><span class="ghost-num">03 &nbsp;DATABASE</span><span class="emo">🗄️</span><h3>What it remembers</h3><p class="sm">Profiles, messages, videos, orders and saved data.</p><span class="hintline">CLICK TO FLIP ↻</span></div>
+          <div class="face back"><b>🗄️ Where you see it</b>Log in on a new phone and your chats are still there. That is the database remembering them for you.<span class="hintline">CLICK TO FLIP BACK ↻</span></div>
+        </div>
+      </button>
+    </div>
+    <div class="glass swiggy rise" style="--i:6">
+      <div class="head">
+        <h3>Example: Swiggy, from “Order” to “Delivered”</h3>
+        <button class="btn" data-play="#fl2" style="--c:#fb923c">▶ Play the order</button>
+      </div>
+      <div class="flow" id="fl2">
+        <div class="node sw-step click fe" role="button" tabindex="0" data-modal="m-sw-1" style="--c:var(--fe)"><span class="lbl">STEP 1</span><h3>Screen</h3><p class="sm">The app takes your order.</p></div><i class="arr" style="--c:var(--fe)"></i>
+        <div class="node sw-step click" role="button" tabindex="0" data-modal="m-sw-2" style="--c:#22d3ee"><span class="lbl">STEP 2</span><h3>API</h3><p class="sm">The request goes to the server.</p></div><i class="arr" style="--c:#22d3ee"></i>
+        <div class="node sw-step click" role="button" tabindex="0" data-modal="m-sw-3" style="--c:var(--be)"><span class="lbl">STEP 3</span><h3>Backend</h3><p class="sm">The order is validated and processed.</p></div><i class="arr" style="--c:var(--be)"></i>
+        <div class="node sw-step click" role="button" tabindex="0" data-modal="m-sw-4" style="--c:var(--db)"><span class="lbl">STEP 4</span><h3>Database</h3><p class="sm">Order and status are stored.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 3 ===================== -->
+<section class="slide s3" data-title="What happens when you tap “Place Order”?" data-emoji="👆" data-quiz="s3" data-fact="3" aria-label="Slide 3">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker rise" style="--i:0">02 &nbsp;/&nbsp; THE JOURNEY OF A CLICK</div>
+      <h2 class="title rise" style="--i:1">What happens when you tap “<span class="kw" role="button" tabindex="0" data-modal="m-placeorder" style="--c:var(--pink)">Place Order</span>”?</h2>
+      <p class="lead rise" style="--i:2">Think of a familiar app. The screen is only the beginning.</p>
+    </div>
+    <div class="rise" style="--i:3;display:flex;justify-content:flex-end;margin-bottom:6px"><button class="btn" data-play="#fl3" data-track=".s3 .track" style="--c:var(--pink)">▶ Play the journey</button></div>
+    <div class="journey rise" style="--i:3" id="fl3">
+      <div class="node glass stop click" role="button" tabindex="0" data-modal="m-click-1" style="--c:var(--fe)"><span class="num">01</span><span class="emo">👆</span><h3>You tap</h3><p class="sm">A user action begins the journey.</p></div>
+      <div class="node glass stop click" role="button" tabindex="0" data-modal="m-click-2" style="--c:var(--be)"><span class="num">02</span><span class="emo">📲</span><h3>App responds</h3><p class="sm">The interface sends a request.</p></div>
+      <div class="node glass stop click" role="button" tabindex="0" data-modal="m-click-3" style="--c:var(--pink)"><span class="num">03</span><span class="emo">🖥️</span><h3>Server works</h3><p class="sm">Business rules are processed.</p></div>
+      <div class="node glass stop click" role="button" tabindex="0" data-modal="m-click-4" style="--c:var(--db)"><span class="num">04</span><span class="emo">💾</span><h3>Data changes</h3><p class="sm">The database stores the result.</p></div>
+    </div>
+    <div class="track rise" style="--i:4"><i></i></div>
+    <div class="gap"></div>
+    <button class="prompt rise" style="--i:5;--c:var(--amber)" data-modal="m-guess3"><span class="tag">AUDIENCE PROMPT</span><span class="txt">What do you think happens first: the database, the server or the screen?</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 4 ===================== -->
+<section class="slide s4" data-title="Software development turns a problem into a product" data-emoji="💡" data-quiz="s4" data-fact="4" aria-label="Slide 4">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker rise" style="--i:0">03 &nbsp;/&nbsp; THE BIG IDEA</div>
+      <h2 class="title rise" style="--i:1">Software development turns a <span class="grad">problem</span> into a <span class="grad">product</span></h2>
+      <p class="lead rise" style="--i:2">It is more than writing code: design, build, test, release and improve.</p>
+    </div>
+    <div class="wheel">
+      <div class="step glass click rise" style="--i:3" role="button" tabindex="0" data-modal="m-design"><div class="ring"><span>✏️</span></div><span class="num">01</span><h3>Design</h3><p class="sm">Understand the user and shape the experience.</p></div>
+      <div class="step glass click rise" style="--i:4" role="button" tabindex="0" data-modal="m-build"><div class="ring"><span>🛠️</span></div><span class="num">02</span><h3>Build</h3><p class="sm">Turn the design into working software.</p></div>
+      <div class="step glass click rise" style="--i:5" role="button" tabindex="0" data-modal="m-test"><div class="ring"><span>🔍</span></div><span class="num">03</span><h3>Test</h3><p class="sm">Check expected behaviour and find defects.</p></div>
+      <div class="step glass click rise" style="--i:6" role="button" tabindex="0" data-modal="m-release"><div class="ring"><span>🚀</span></div><span class="num">04</span><h3>Release</h3><p class="sm">Deploy, monitor and keep improving.</p></div>
+    </div>
+    <button class="prompt rise" style="--i:7;--c:var(--fe)" data-modal="m-qc4"><span class="tag">QUICK CHECK</span><span class="txt">Name one app you use daily. What problem does it solve for you?</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 5 ===================== -->
+<section class="slide s5" data-title="Why are full stack developers valuable?" data-emoji="💎" data-quiz="s5" data-fact="5" aria-label="Slide 5">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker rise" style="--i:0">04 &nbsp;/&nbsp; CAREER CONTEXT</div>
+      <h2 class="title rise" style="--i:1">Why are <span class="kw" role="button" tabindex="0" data-modal="m-fullstack">full stack developers</span> valuable?</h2>
+      <p class="lead rise" style="--i:2">They connect the user experience to the systems behind it.</p>
+    </div>
+    <div class="bento">
+      <button class="glass xc click rise" style="--i:3" data-expand aria-expanded="false"><span class="num">01</span><span class="big">🧭</span><h3>End-to-end perspective</h3><p class="sm">Can trace a feature from the screen to the API and the stored data.</p><div class="more"><b>Example:</b> a price looks wrong on screen. You can check the screen, then the API response, then the value stored in the database, and find exactly where it went wrong.</div><span class="arrowdown">TAP TO EXPAND ▾</span></button>
+      <button class="glass xc click rise" style="--i:4" data-expand aria-expanded="false"><span class="num">02</span><h3>Faster collaboration</h3><p class="sm">Can communicate across frontend, backend and database work.</p><div class="more">You can talk to designers, API developers and database people in their own language, so fewer things get lost in translation.</div><span class="arrowdown">TAP TO EXPAND ▾</span></button>
+      <button class="glass xc click rise" style="--i:5" data-expand aria-expanded="false"><span class="num">03</span><h3>Better debugging</h3><p class="sm">Can investigate issues across multiple layers instead of guessing.</p><div class="more">Check one layer at a time: browser console, network request, server logs, then the database query.</div><span class="arrowdown">TAP TO EXPAND ▾</span></button>
+      <button class="glass xc click rise" style="--i:6" data-expand aria-expanded="false"><span class="num">04</span><h3>Complete solutions</h3><p class="sm">Can build and demonstrate a working product journey.</p><div class="more">A project where you sign in, save data and see it again is a complete story you can demo in an interview.</div><span class="arrowdown">TAP TO EXPAND ▾</span></button>
+    </div>
+    <button class="quote rise" style="--i:7" data-modal="m-keyidea"><span class="lbl">KEY IDEA</span><span class="t">“Full stack” means understanding the connections, not memorising every framework.</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 6 ===================== -->
+<section class="slide s6" data-title="Frontend: the experience users interact with" data-emoji="🎨" data-quiz="s6" data-fact="6" aria-label="Slide 6">
+  <div class="wrap">
+    <div class="fe">
+      <div class="kicker rise" style="--i:0">05 &nbsp;/&nbsp; LAYER 1: FRONTEND</div>
+      <h2 class="title rise" style="--i:1">Frontend: the experience users interact with</h2>
+      <p class="lead rise" style="--i:2">The browser turns structure, styling and behaviour into an interface.</p>
+    </div>
+    <div class="browser rise" style="--i:3">
+      <div class="bar"><i></i><i></i><i></i><u>https://my-app.example</u></div>
+      <div class="tiles">
+        <div class="glass tile click" role="button" tabindex="0" data-modal="m-html"><span class="lbl">STRUCTURE</span><span class="emo">🏗️</span><h3>HTML</h3><p class="sm">Meaning and layout: headings, forms, buttons and content.</p></div>
+        <div class="glass tile click" role="button" tabindex="0" data-modal="m-css"><span class="lbl">PRESENTATION</span><span class="emo">🎨</span><h3>CSS + <span class="kw" role="button" tabindex="0" data-modal="m-bootstrap" style="--c:#c4b5fd">Bootstrap</span></h3><p class="sm">Visual design, spacing, layout and responsive behaviour.</p></div>
+        <div class="glass tile click" role="button" tabindex="0" data-modal="m-js"><span class="lbl">INTERACTION</span><span class="emo">⚡</span><h3>JavaScript</h3><p class="sm">Events, validation, calculations and dynamic behaviour.</p></div>
+        <div class="glass tile click" role="button" tabindex="0" data-modal="m-react"><span class="lbl">COMPONENTS</span><span class="emo">⚛️</span><h3>React</h3><p class="sm">Reusable components and state-driven interfaces.</p></div>
+      </div>
+    </div>
+    <button class="prompt demo rise" style="--i:4;--c:var(--fe)" data-modal="m-demo6"><span class="tag">MINI DEMO</span><span class="txt">Show a form &nbsp;→&nbsp; type a name &nbsp;→&nbsp; click Submit &nbsp;→&nbsp; display a greeting.</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 7 ===================== -->
+<section class="slide s7" data-title="Backend and database: logic and memory" data-emoji="🧠" data-quiz="s7" data-fact="7" aria-label="Slide 7">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise be" style="--i:0">06 &nbsp;/&nbsp; LAYERS 2 + 3</div>
+      <h2 class="title rise" style="--i:1">Backend and database: logic and memory</h2>
+      <p class="lead rise" style="--i:2">The backend exposes <span class="kw" role="button" tabindex="0" data-modal="m-api">APIs</span>, applies business rules and works with persistent data.</p>
+    </div>
+    <div class="split">
+      <div class="backs">
+        <div class="glass bk click be rise" style="--i:3" role="button" tabindex="0" data-modal="m-springboot"><span class="emo">☕</span><div><span class="lbl">BACKEND OPTION</span><h3>Java + Spring Boot</h3><p class="sm">Object-oriented, platform-independent and widely used in enterprise systems.</p></div></div>
+        <div class="glass bk click pk rise" style="--i:4" role="button" tabindex="0" data-modal="m-pythonnet"><span class="emo">🐍</span><div><span class="lbl">BACKEND OPTIONS</span><h3>Python / .NET</h3><p class="sm">Popular choices for web services, automation and business applications.</p></div></div>
+      </div>
+      <div class="glass dbcard click db rise" style="--i:5" role="button" tabindex="0" data-modal="m-datalayer">
+        <div class="cyl"><i></i><i></i><i></i><i></i></div>
+        <span class="lbl">DATA LAYER</span><h3>SQL (MySQL) / MongoDB</h3><p class="sm">Relational tables or document storage, chosen to fit the shape of the data.</p>
+      </div>
+    </div>
+    <button class="prompt demo7 rise" style="--i:6;--c:var(--db)" data-modal="m-demo7"><span class="tag">DEMO PROMPT</span><span class="txt">If a user profile must be saved and loaded tomorrow, which layer stores it?</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 8 ===================== -->
+<section class="slide s8" data-title="One feature. Three layers. One complete journey." data-emoji="🔐" data-quiz="s8" data-fact="8" aria-label="Slide 8">
+  <div class="wrap">
+    <div class="sec-head" style="display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap">
+      <div>
+        <div class="kicker rise" style="--i:0">07 &nbsp;/&nbsp; FOLLOW THE REQUEST</div>
+        <h2 class="title rise" style="--i:1">One feature. Three layers. One complete journey.</h2>
+        <p class="lead rise" style="--i:2">Example: a student signs in to a learning portal.</p>
+      </div>
+      <button class="btn rise" style="--i:3;--c:var(--be)" data-play="#fl8" data-packet=".s8 .packet" data-step="880">▶ Send the request</button>
+    </div>
+    <div class="seq rise" style="--i:3" id="fl8">
+      <div class="node glass sn click" role="button" tabindex="0" data-modal="m-seq-1"><span class="num">1</span><span class="emo">⚛️</span><h3>React UI</h3><p class="sm">User enters credentials.</p></div>
+      <div class="node glass sn click" role="button" tabindex="0" data-modal="m-seq-2"><span class="num">2</span><span class="emo">📨</span><h3>API request</h3><p class="sm">Browser sends data to the server.</p></div>
+      <div class="node glass sn click" role="button" tabindex="0" data-modal="m-seq-3"><span class="num">3</span><span class="emo">⚙️</span><h3>Backend</h3><p class="sm">Validates input and checks rules.</p></div>
+      <div class="node glass sn click" role="button" tabindex="0" data-modal="m-seq-4"><span class="num">4</span><span class="emo">🗄️</span><h3>Database</h3><p class="sm">Finds the matching user record.</p></div>
+      <div class="node glass sn click" role="button" tabindex="0" data-modal="m-seq-5"><span class="num">5</span><span class="emo">✅</span><h3>Response</h3><p class="sm">Server returns success or error.</p></div>
+    </div>
+    <div class="packet rise" style="--i:4" aria-hidden="true"><span>📦</span></div>
+    <button class="prompt ask rise" style="--i:5;--c:var(--amber)" data-modal="m-debug8"><span class="tag">ASK THE ROOM</span><span class="txt">Where would you investigate if login works but the user is not found?</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 9 ===================== -->
+<section class="slide s9" data-title="Testing: prove that the feature works" data-emoji="🧪" data-quiz="s9" data-fact="9" aria-label="Slide 9">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">08 &nbsp;/&nbsp; QUALITY</div>
+      <h2 class="title rise" style="--i:1">Testing: prove that the feature works</h2>
+      <p class="lead rise" style="--i:2">A feature that works once is not automatically a reliable feature.</p>
+    </div>
+    <div class="layout">
+      <div class="pyr rise" style="--i:3">
+        <div class="glass lv click" role="button" tabindex="0" data-modal="m-unit"><span class="lbl">LEVEL 1</span><h3>Unit</h3><p class="sm">Does a small function behave correctly?</p></div>
+        <div class="glass lv click" role="button" tabindex="0" data-modal="m-integration"><span class="lbl">LEVEL 2</span><h3>Integration</h3><p class="sm">Do the API and database work together?</p></div>
+        <div class="glass lv click" role="button" tabindex="0" data-modal="m-system"><span class="lbl">LEVEL 3</span><h3>System / UI</h3><p class="sm">Does the complete user journey work?</p></div>
+      </div>
+      <div class="side">
+        <button class="prompt rise" style="--i:4;--c:var(--red);flex-wrap:wrap" data-modal="m-bug9"><span class="big" style="font-size:2rem">🐞</span><span class="tag" style="color:var(--red)">BUG CHALLENGE</span><span class="txt">Login accepts an empty password. What should happen, and where would you test it?</span></button>
+        <p class="sm rise" style="--i:5">👈 Tap a level of the pyramid to see what it checks.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 10 ===================== -->
+<section class="slide s10" data-title="The software development life cycle (SDLC)" data-emoji="🔄" data-quiz="s10" data-fact="10" aria-label="Slide 10">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">09 &nbsp;/&nbsp; DELIVERY PROCESS</div>
+      <h2 class="title rise" style="--i:1">The software development life cycle (<span class="kw" role="button" tabindex="0" data-modal="m-sdlc">SDLC</span>)</h2>
+      <p class="lead rise" style="--i:2">A repeatable process helps teams deliver useful software and improve it over time.</p>
+    </div>
+    <div class="flow cycle rise" style="--i:3;display:grid" id="fl10">
+      <div class="node glass ph click" role="button" tabindex="0" data-modal="m-sdlc-1"><span class="num">01</span><h3>Requirements</h3><p class="sm">What to build</p></div>
+      <div class="node glass ph click" role="button" tabindex="0" data-modal="m-sdlc-2"><span class="num">02</span><h3>Planning</h3><p class="sm">Scope and schedule</p></div>
+      <div class="node glass ph click" role="button" tabindex="0" data-modal="m-sdlc-3"><span class="num">03</span><h3>Design</h3><p class="sm">Architecture and UI</p></div>
+      <div class="node glass ph click" role="button" tabindex="0" data-modal="m-sdlc-4"><span class="num">04</span><h3>Development</h3><p class="sm">Write the code</p></div>
+      <div class="node glass ph click" role="button" tabindex="0" data-modal="m-sdlc-5"><span class="num">05</span><h3>Testing</h3><p class="sm">Verify quality</p></div>
+      <div class="node glass ph click" role="button" tabindex="0" data-modal="m-sdlc-6"><span class="num">06</span><h3>Deployment</h3><p class="sm">Release to users</p></div>
+      <div class="node glass ph click" role="button" tabindex="0" data-modal="m-sdlc-7"><span class="num">07</span><h3>Maintenance</h3><p class="sm">Fix and improve</p></div>
+    </div>
+    <button class="loop rise" style="--i:4" data-modal="m-loop10"><span class="spin">🔄</span><span class="t">Maintenance can reveal new requirements, so the cycle continues.</span></button>
+    <div class="rise" style="--i:5;display:flex;gap:12px;flex-wrap:wrap;margin-top:14px">
+      <button class="prompt disc" style="--c:var(--amber);flex:1 1 360px;margin-top:0" data-modal="m-disc10"><span class="tag">DISCUSSION</span><span class="txt">Which phase would you revisit if users say a feature is confusing after launch?</span></button>
+      <button class="btn" data-play="#fl10" style="--c:var(--fe);align-self:center">▶ Walk the cycle</button>
+    </div>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 11 ===================== -->
+<section class="slide s11" data-title="Learn → Build → Connect → Apply" data-emoji="🗺️" data-quiz="s11" data-fact="11" aria-label="Slide 11">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">10 &nbsp;/&nbsp; BECOMING JOB-READY</div>
+      <h2 class="title rise" style="--i:1">Learn &nbsp;→&nbsp; Build &nbsp;→&nbsp; Connect &nbsp;→&nbsp; Apply</h2>
+      <p class="lead rise" style="--i:2">A focused portfolio and strong fundamentals matter more than collecting tools.</p>
+    </div>
+    <div class="road">
+      <div class="glass rs click rise" style="--i:3" role="button" tabindex="0" data-modal="m-learn"><span class="lbl">STEP 1</span><span class="emo">📚</span><h3>Learn</h3><p class="sm">One language deeply, DSA, SQL and web fundamentals.</p></div>
+      <div class="glass rs click rise" style="--i:4" role="button" tabindex="0" data-modal="m-build11"><span class="lbl">STEP 2</span><span class="emo">🛠️</span><h3>Build</h3><p class="sm">2–3 complete projects, GitHub and readable README files.</p></div>
+      <div class="glass rs click rise" style="--i:5" role="button" tabindex="0" data-modal="m-connect"><span class="lbl">STEP 3</span><span class="emo">🤝</span><h3>Connect</h3><p class="sm">Peer learning, communities, LinkedIn and feedback.</p></div>
+      <div class="glass rs click rise" style="--i:6" role="button" tabindex="0" data-modal="m-apply"><span class="lbl">STEP 4</span><span class="emo">🎯</span><h3>Apply</h3><p class="sm">Resume, interview practice and explaining your decisions.</p></div>
+    </div>
+    <div class="glass signals rise" style="--i:7"><span class="lbl am" style="--c:var(--amber)">EMPLOYER SIGNALS</span>
+      <span class="kw fe" role="button" tabindex="0" data-modal="m-sig-1">Problem solving</span><span class="plus">&nbsp;+&nbsp;</span><span class="kw be" role="button" tabindex="0" data-modal="m-sig-2">communication</span><span class="plus">&nbsp;+&nbsp;</span><span class="kw db" role="button" tabindex="0" data-modal="m-sig-3">demonstrable projects</span><span>.</span></div>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 12 ===================== -->
+<section class="slide s12" data-title="Job description: Java Full Stack Developer, TCS" data-emoji="💼" data-quiz="s12" data-fact="12" aria-label="Slide 12">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">11 &nbsp;/&nbsp; WHAT EMPLOYERS ASK FOR</div>
+      <h2 class="title rise" style="--i:1">Job description: Java Full Stack Developer, TCS</h2>
+    </div>
+    <div class="job">
+      <div class="glass jc rise" style="--i:2">
+        <div class="head"><div class="logo">💼</div><div><h3 class="kw" role="button" tabindex="0" data-modal="m-jd" style="--c:#fff;border-bottom-color:var(--fe)">Java Full Stack Developer</h3><div class="meta">Tata Consultancy Services (TCS) &nbsp;•&nbsp; Full-time &nbsp;•&nbsp; IT services and consulting &nbsp;•&nbsp; India</div><div class="src">LinkedIn &nbsp;•&nbsp; Sample listing</div></div></div>
+        <span class="lbl">KEY RESPONSIBILITIES</span>
+        <ul class="resp">
+          <li><span>Build web applications with <span class="kw fe" role="button" tabindex="0" data-modal="m-java">Java</span>, <span class="kw be" role="button" tabindex="0" data-modal="m-springboot">Spring Boot</span> and <span class="kw fe" role="button" tabindex="0" data-modal="m-react">React</span>.</span></li>
+          <li><span>Design and consume secure, scalable <span class="kw pk" role="button" tabindex="0" data-modal="m-api">REST APIs</span>.</span></li>
+          <li><span>Write optimised <span class="kw db" role="button" tabindex="0" data-modal="m-sql">SQL</span> queries on relational databases.</span></li>
+          <li><span>Containerise apps with <span class="kw fe" role="button" tabindex="0" data-modal="m-docker">Docker</span> and deploy them on <span class="kw am" role="button" tabindex="0" data-modal="m-aws">AWS</span>.</span></li>
+          <li><span>Write <span class="kw am" role="button" tabindex="0" data-modal="m-unit">unit</span> and <span class="kw am" role="button" tabindex="0" data-modal="m-integration">integration</span> tests; review code; fix defects.</span></li>
+          <li><span>Work in <span class="kw pk" role="button" tabindex="0" data-modal="m-agile">Agile</span> teams with developers, testers and analysts.</span></li>
+        </ul>
+      </div>
+      <div class="glass jc rise" style="--i:3">
+        <span class="lbl">REQUIRED SKILLS</span>
+        <div class="skills">
+          <div class="glass sk click" role="button" tabindex="0" data-modal="m-java" style="--c:#fb923c"><b>Java</b><span>Core Java 8+, OOP, collections, streams</span></div>
+          <div class="glass sk click" role="button" tabindex="0" data-modal="m-springboot" style="--c:var(--db)"><b>Spring Boot</b><span>Microservices, Spring Data, Security</span></div>
+          <div class="glass sk click" role="button" tabindex="0" data-modal="m-react" style="--c:var(--fe)"><b>React</b><span>Hooks, state management, components</span></div>
+          <div class="glass sk click" role="button" tabindex="0" data-modal="m-sql" style="--c:var(--be)"><b>SQL</b><span>Joins, indexing, query optimisation</span></div>
+          <div class="glass sk click" role="button" tabindex="0" data-modal="m-api" style="--c:var(--pink)"><b>REST APIs</b><span>Design, JSON, status codes, Postman</span></div>
+          <div class="glass sk click" role="button" tabindex="0" data-modal="m-aws" style="--c:var(--amber)"><b>AWS</b><span>EC2, S3, RDS and IAM fundamentals</span></div>
+          <div class="glass sk click" role="button" tabindex="0" data-modal="m-docker" style="--c:#22d3ee;grid-column:1/-1"><b>Docker</b><span>Images, containers, Docker Compose</span></div>
+        </div>
+        <div class="good"><span class="lbl">Good to have:</span> <span class="kw fe" role="button" tabindex="0" data-modal="m-git">Git</span> &nbsp;•&nbsp; <span class="kw am" role="button" tabindex="0" data-modal="m-junit">JUnit</span> &nbsp;•&nbsp; <span class="kw db" role="button" tabindex="0" data-modal="m-cicd">CI/CD</span> &nbsp;•&nbsp; <span class="kw pk" role="button" tabindex="0" data-modal="m-agile">Agile / Scrum</span></div>
+      </div>
+    </div>
+    <p class="note rise" style="--i:4">Sample description based on typical TCS Java Full Stack listings. Confirm the details against the live LinkedIn posting before presenting.</p>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 13 ===================== -->
+<section class="slide s13" data-title="Why Generative AI matters" data-emoji="🤖" data-quiz="s13" data-fact="13" aria-label="Slide 13">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">12 &nbsp;/&nbsp; TRAINING TRACK</div>
+      <h2 class="title rise" style="--i:1">Why <span class="grad">Generative AI</span> matters</h2>
+      <p class="lead rise" style="--i:2">Generative AI integration is now part of the full stack job.</p>
+    </div>
+    <div class="why3">
+      <div class="glass wy click rise" style="--i:3" role="button" tabindex="0" data-modal="m-ai-1"><span class="lbl">WHY 1</span><span class="emo">⚡</span><h3>Build faster</h3><p class="sm">AI speeds up coding, testing and debugging.</p></div>
+      <div class="glass wy click rise" style="--i:4" role="button" tabindex="0" data-modal="m-ai-2"><span class="lbl">WHY 2</span><span class="emo">💬</span><h3>Ship smarter products</h3><p class="sm">Chat, search and summaries inside your apps.</p></div>
+      <div class="glass wy click rise" style="--i:5" role="button" tabindex="0" data-modal="m-ai-3"><span class="lbl">WHY 3</span><span class="emo">🎓</span><h3>Stay job-ready</h3><p class="sm">Employers expect AI-ready developers.</p></div>
+    </div>
+    <button class="take rise" style="--i:6" data-modal="m-ai-take"><span class="lbl am" style="--c:var(--amber);white-space:nowrap">TAKEAWAY</span><span class="t">Full stack + Generative AI = developers who ship intelligent features.</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 14 ===================== -->
+<section class="slide s14" data-title="Why AWS and Docker matter" data-emoji="☁️" data-quiz="s14" data-fact="14" aria-label="Slide 14">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">13 &nbsp;/&nbsp; TRAINING TRACK</div>
+      <h2 class="title rise" style="--i:1">Why <span class="kw" role="button" tabindex="0" data-modal="m-aws" style="--c:#fb923c">AWS</span> and <span class="kw" role="button" tabindex="0" data-modal="m-docker" style="--c:#38bdf8">Docker</span> matter</h2>
+      <p class="lead rise" style="--i:2">Build it once, run it anywhere, scale it in the cloud.</p>
+    </div>
+    <div class="vs">
+      <div class="glass pan dk rise" style="--i:3">
+        <span class="lbl">CONTAINERS</span>
+        <h3 class="kw" role="button" tabindex="0" data-modal="m-docker" style="--c:#38bdf8;border-bottom:0">🐳 Why Docker?</h3>
+        <div class="acc">
+          <div class="ai"><button aria-expanded="false">Runs the same on every machine</button><div class="ex">The container carries the app, its runtime and its libraries, so a laptop, a teammate’s PC and a server all behave alike.</div></div>
+          <div class="ai"><button aria-expanded="false">Ends “it works on my machine”</button><div class="ex">Everyone runs the exact same container, so differences in setup stop causing surprise bugs.</div></div>
+          <div class="ai"><button aria-expanded="false">Fast, repeatable setup</button><div class="ex">One command (for example <code>docker compose up</code>) can start the app, the database and more.</div></div>
+        </div>
+      </div>
+      <div class="glass pan aw rise" style="--i:4">
+        <span class="lbl">CLOUD</span>
+        <h3 class="kw" role="button" tabindex="0" data-modal="m-aws" style="--c:#fb923c;border-bottom:0">☁️ Why AWS?</h3>
+        <div class="acc">
+          <div class="ai"><button aria-expanded="false">Deploy and scale on demand</button><div class="ex">Traffic spike on result day? Add more servers in minutes, then remove them when the rush is over.</div></div>
+          <div class="ai"><button aria-expanded="false">Pay only for what you use</button><div class="ex">Like an electricity bill: you pay for what you consume instead of building your own power station.</div></div>
+          <div class="ai"><button aria-expanded="false">Asked for in most job listings</button><div class="ex">Cloud skills show up in many job posts, like the TCS listing earlier, which asks for EC2, S3, RDS and IAM basics.</div></div>
+        </div>
+      </div>
+    </div>
+    <button class="tog rise" style="--i:5" data-modal="m-together"><span class="lbl am" style="--c:var(--db);white-space:nowrap">TOGETHER</span><span class="t">Package with Docker. Run on AWS. Ship with confidence.</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 15 ===================== -->
+<section class="slide s15" data-title="Fresher salary packages in India" data-emoji="💰" data-quiz="s15" data-fact="15" aria-label="Slide 15">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">14 &nbsp;/&nbsp; CAREER OUTLOOK</div>
+      <h2 class="title rise" style="--i:1">Fresher salary packages in India</h2>
+      <p class="lead rise" style="--i:2">Illustrative ranges; actual offers vary by city, company, role and market.</p>
+    </div>
+    <div class="glass chart rise" style="--i:3">
+      <button class="row click" data-modal="m-sal-1" style="--c:var(--fe)"><div><h3>Small companies</h3><span class="rng">₹2.5–5 LPA</span></div><div class="plot"><div class="bar" style="--i:0;left:8.33%;width:8.33%"></div></div></button>
+      <button class="row click" data-modal="m-sal-2" style="--c:var(--be)"><div><h3>Mid-size companies</h3><span class="rng">₹4–8 LPA</span></div><div class="plot"><div class="bar" style="--i:1;left:13.33%;width:13.33%"></div></div></button>
+      <button class="row click" data-modal="m-sal-3" style="--c:var(--pink)"><div><h3>Product-based companies</h3><span class="rng">₹8–15+ LPA</span></div><div class="plot"><div class="bar open-end" style="--i:2;left:26.67%;width:26.67%"></div></div></button>
+      <button class="row click" data-modal="m-sal-4" style="--c:var(--db)"><div><h3>Top tech companies</h3><span class="rng">₹12–30+ LPA</span></div><div class="plot"><div class="bar open-end" style="--i:3;left:40%;width:60%"></div></div></button>
+      <div class="axis"><button class="kw lpa" data-modal="m-lpa" style="--c:var(--amber)">LPA</button><div class="ticks"><span style="left:0">0</span><span style="left:16.67%">5</span><span style="left:33.33%">10</span><span style="left:50%">15</span><span style="left:66.67%">20</span><span style="left:83.33%">25</span><span style="left:100%">30+</span></div></div>
+    </div>
+    <button class="prompt focus rise" style="--i:4;--c:var(--db)" data-modal="m-focus15"><span class="tag">FOCUS</span><span class="txt">Build skills and evidence of impact, not just a package number.</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 16 ===================== -->
+<section class="slide s16" data-title="Quick check: can you trace the stack?" data-emoji="❓" data-fact="" aria-label="Slide 16">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">15 &nbsp;/&nbsp; AUDIENCE INTERACTION</div>
+      <h2 class="title rise" style="--i:1">Quick check: can you trace the stack?</h2>
+      <p class="lead rise" style="--i:2">Choose an answer aloud, then click “Reveal answer”.</p>
+    </div>
+    <div class="glass qbox rise" style="--i:3">A user clicks “Save Profile”. Which layer should persist the profile data?</div>
+    <div class="mcq rise" style="--i:4" role="radiogroup" aria-label="Answer choices">
+      <button class="opt" role="radio" aria-checked="false" data-opt="A"><span class="letter">A</span><span>HTML</span></button>
+      <button class="opt" role="radio" aria-checked="false" data-opt="B"><span class="letter">B</span><span>Backend API</span></button>
+      <button class="opt" role="radio" aria-checked="false" data-opt="C"><span class="letter">C</span><span>Database</span></button>
+      <button class="opt" role="radio" aria-checked="false" data-opt="D"><span class="letter">D</span><span>CSS</span></button>
+    </div>
+    <div class="actions rise" style="--i:5">
+      <button class="btn" id="revealBtn" style="--c:var(--amber)">Reveal answer</button>
+      <span class="status" id="revealStatus" aria-live="polite">👆 Pick A, B, C or D first (or reveal straight away!).</span>
+    </div>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 17 ===================== -->
+<section class="slide s17" data-title="Correct answer: C, Database" data-emoji="✅" data-fact="" aria-label="Slide 17">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise db" style="--i:0">15 &nbsp;/&nbsp; ANSWER REVEAL</div>
+      <div class="answer rise" style="--i:1"><span class="check">✅</span><div><h2 class="title">Correct answer: C, Database</h2><p class="lead" style="margin-top:6px">The backend processes the request; the database stores the profile for future retrieval.</p></div></div>
+    </div>
+    <div class="lay">
+      <div class="glass ly click fe rise" style="--i:2" role="button" tabindex="0" data-modal="m-frontend"><span class="emo">🎨</span><div><span class="lbl">USER INTERFACE</span><h3>Frontend</h3><p class="sm">Collects input and displays the result.</p></div></div>
+      <div class="hand" aria-hidden="true">⇅</div>
+      <div class="glass ly click be rise" style="--i:3" role="button" tabindex="0" data-modal="m-backend"><span class="emo">⚙️</span><div><span class="lbl">APPLICATION LOGIC</span><h3>Backend</h3><p class="sm">Validates the request and applies business rules.</p></div></div>
+      <div class="hand" aria-hidden="true">⇅</div>
+      <div class="glass ly win click db rise" style="--i:4" role="button" tabindex="0" data-modal="m-database"><span class="emo">🗄️</span><div><span class="lbl">PERSISTENT DATA</span><h3>Database</h3><p class="sm">Persists the profile so it can be loaded later.</p></div></div>
+    </div>
+    <button class="prompt takes rise" style="--i:5;--c:var(--amber)" data-modal="m-handoffs"><span class="tag">TAKEAWAY</span><span class="txt">The layers collaborate. A full stack developer understands the hand-offs.</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 18 ===================== -->
+<section class="slide s18" data-title="Don’t just learn the stack. Build something with it." data-emoji="🏁" data-quiz="s18" data-fact="18" aria-label="Slide 18">
+  <div class="wrap">
+    <div>
+      <div class="kicker rise" style="--i:0">WRAP-UP &nbsp;/&nbsp; YOUR NEXT STEP</div>
+      <h2 class="title rise" style="--i:1">Don’t just learn the stack. <span class="grad">Build something with it.</span></h2>
+    </div>
+    <div class="steps">
+      <div class="glass st click rise" style="--i:2" role="button" tabindex="0" data-modal="m-step-1"><span class="big">01</span><h3>Pick a problem</h3><p class="sm">Choose something real: a tool you or your friends would use.</p></div>
+      <div class="glass st click rise" style="--i:3" role="button" tabindex="0" data-modal="m-step-2"><span class="big">02</span><h3>Build one feature end to end</h3><p class="sm">React screen, Spring Boot API and a SQL table, working together.</p></div>
+      <div class="glass st click rise" style="--i:4" role="button" tabindex="0" data-modal="m-step-3"><span class="big">03</span><h3>Test it and show it</h3><p class="sm">Add tests, containerise it, deploy it and share the link.</p></div>
+    </div>
+    <button class="prompt qs rise" style="--i:5;--c:var(--pink)" data-modal="m-poll"><span class="tag">QUESTIONS?</span><span class="txt">Which layer would you like to explore in a live coding demo?</span></button>
+  </div>
+  <div class="foot"><span>Full Stack Developer Career Guide</span><span class="pg"></span></div>
+</section>
+
+<!-- ===================== SLIDE 19 ===================== -->
+<section class="slide s19" data-title="Thank you" data-emoji="🎓" data-fact="" aria-label="Slide 19">
+  <div class="wrap fin">
+    <h2 class="mega rise" style="--i:0">Full Stack is not just about coding.</h2>
+    <p class="title grad rise" style="--i:1;font-size:clamp(1.3rem,3vw,2.3rem)">It is about finding solutions to real problems.</p>
+    <p class="lead rise" style="--i:2;max-width:none">Coding is never difficult when you learn to</p>
+    <div class="words rise" style="--i:3">
+      <button class="word click" data-modal="m-think">THINK</button>
+      <button class="word click" data-modal="m-practise">PRACTISE</button>
+      <button class="word click" data-modal="m-solve">SOLVE</button>
+    </div>
+    <button class="thanks rise" style="--i:4" data-confetti>Thank you</button>
+  </div>
+</section>
+
+  </main>
+
+  <footer class="botbar">
+    <button class="navbtn" id="prev" aria-label="Previous slide" title="Previous (←)">←<span class="t">&nbsp;Prev</span></button>
+    <div class="mid-tools">
+      <button class="ibtn" id="quizBtn" title="Quiz for this slide (Q)">🎯<span class="hide-sm">&nbsp;Quiz</span></button>
+      <span class="counter" aria-label="Slide number"><b id="cnt">1</b> / <span id="tot">19</span></span>
+      <button class="ibtn" id="factBtn" title="Fun fact for this slide">💡<span class="hide-sm">&nbsp;Fun fact</span></button>
+    </div>
+    <button class="navbtn" id="next" aria-label="Next slide" title="Next (→)"><span class="t">Next&nbsp;</span>→</button>
+  </footer>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="m-card" id="mCard" role="dialog" aria-modal="true" aria-labelledby="mTitle" tabindex="-1">
+    <button class="m-close" id="mClose" aria-label="Close popup">✕</button>
+    <div id="mBody"></div>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+/* =====================================================================
+   DATA: popups (MODALS), slide quizzes (QUIZ) and fun facts (FACTS).
+   Everything here is ADDITIONAL teaching material. The original slide
+   text lives only in slides.html and is never edited.
+   Fields: i icon · tag label · t title · c colour · simple · ex example
+           pts bullets · code · fact · tabs · q quiz[] · reveal · custom
+   ===================================================================== */
+const COL = { fe: 'var(--fe)', be: 'var(--be)', db: 'var(--db)', pk: 'var(--pink)', am: 'var(--amber)', rd: 'var(--red)' };
+
+const MODALS = {
+  /* ---------- Slide 1 ---------- */
+  'm-session': { i: '🎮', tag: 'How this session works', t: 'Interactive session', c: COL.am,
+    simple: 'This is not a slideshow to just watch. Things that glow or have a <b>✦</b> sparkle are clickable. Click them to open explanations, examples and challenges.',
+    pts: ['<kbd>←</kbd> <kbd>→</kbd> move between slides', '<kbd>O</kbd> opens the overview of all slides', '<kbd>F</kbd> toggles full screen, <kbd>T</kbd> starts the timer', '🎯 <b>Quiz</b> and 💡 <b>Fun fact</b> buttons at the bottom belong to the current slide', '⭐ You earn a point for every quiz question answered correctly'],
+    fact: 'Try it now: close this popup with the ✕ button, by clicking outside, or by pressing Esc.' },
+  'm-ask': { i: '🙋', tag: 'Participation mode 1', t: 'Ask', c: COL.fe,
+    simple: 'There are no silly questions. If a word or idea is new to you, ask. Chances are half the room is wondering the same thing.',
+    ex: 'Not sure what an “API” is? Ask! Later on, slide 7 has a popup about it.' },
+  'm-guess': { i: '🤔', tag: 'Participation mode 2', t: 'Guess', c: COL.pk,
+    simple: 'Guessing before you see the answer makes your brain much more ready to remember it. Wrong guesses are welcome.',
+    ex: 'On slide 3 you will be asked what happens first when you tap “Place Order”. Make a guess before you click!' },
+  'm-explore': { i: '🧭', tag: 'Participation mode 3', t: 'Explore', c: COL.db,
+    simple: 'Click everything that sparkles. Cards flip, diagrams explain themselves and every keyword has a beginner-friendly popup.',
+    ex: 'Open the overview with <kbd>O</kbd> to jump to any slide.' },
+  'm-frontend': { i: '🎨', tag: 'Layer 1 · Frontend', t: 'Frontend', c: COL.fe,
+    simple: 'Everything you can <b>see and touch</b> in an app: screens, buttons, menus, colours and animations. It runs in your browser or on your phone.',
+    ex: 'On Swiggy, the restaurant list, the food photos and the “Place Order” button are all frontend.',
+    pts: ['Built with HTML, CSS and JavaScript (and tools like React)', 'Talks to the backend by sending requests', 'Should be fast, easy to use and work on every screen size'],
+    fact: 'The word “frontend” is also called the “client side” because it runs on the user’s device (the client).' },
+  'm-backend': { i: '⚙️', tag: 'Layer 2 · Backend', t: 'Backend', c: COL.be,
+    simple: 'The hidden <b>brain</b> of the app. It receives requests from the frontend, checks the rules (is this password right? is the restaurant open?) and decides what to do next.',
+    ex: 'When you place an order, the backend confirms the price, checks payment and tells the restaurant about the order.',
+    pts: ['Exposes APIs that the frontend can call', 'Applies business rules and security checks', 'Reads and writes data in the database'] },
+  'm-database': { i: '🗄️', tag: 'Layer 3 · Database', t: 'Database', c: COL.db,
+    simple: 'An organised place where data is stored <b>permanently</b>, so it is still there tomorrow even after the app is closed or the server restarts.',
+    ex: 'Your Instagram profile, photos and followers, or your past Swiggy orders, all live in databases.',
+    pts: ['SQL databases store data in tables (rows and columns)', 'Document databases like MongoDB store JSON-like documents', 'Backups protect the data if something goes wrong'] },
+
+  /* ---------- Slide 2 ---------- */
+  'm-fullstack': { i: '🥞', tag: 'Key concept', t: 'What is “full stack”?', c: COL.fe,
+    simple: 'A “stack” is a set of layers placed on top of each other. A <b>full stack</b> application has all the layers: frontend, backend and database. A <b>full stack developer</b> understands how all of them work together.',
+    ex: '🍽️ Think of a restaurant. The dining area is the <b>frontend</b>, the kitchen is the <b>backend</b> and the storeroom is the <b>database</b>. A full stack person knows how the whole restaurant runs.',
+    q: [{ q: 'In the restaurant analogy, which part is the kitchen?', o: ['Frontend', 'Backend', 'Database'], a: 1, w: 'The kitchen does the work behind the scenes, just like the backend.' }] },
+  'm-app-instagram': { i: '📸', tag: 'Real app', t: 'Instagram', c: COL.pk, simple: 'How the three layers show up when you scroll your feed:',
+    pts: ['🎨 <b>Frontend:</b> the feed, stories and the heart button', '⚙️ <b>Backend:</b> chooses which posts to show you and checks you are logged in', '🗄️ <b>Database:</b> stores posts, photos, comments and followers'] },
+  'm-app-whatsapp': { i: '💬', tag: 'Real app', t: 'WhatsApp', c: COL.db, simple: 'How the three layers show up when you send a message:',
+    pts: ['🎨 <b>Frontend:</b> the chat screen and the send button', '⚙️ <b>Backend:</b> delivers your message to the right person', '🗄️ <b>Database:</b> keeps account details and message delivery information'] },
+  'm-app-youtube': { i: '▶️', tag: 'Real app', t: 'YouTube', c: COL.rd, simple: 'How the three layers show up when you watch a video:',
+    pts: ['🎨 <b>Frontend:</b> the video player, search bar and comments', '⚙️ <b>Backend:</b> works out recommendations and handles your search', '🗄️ <b>Database:</b> stores video details, likes, comments and your watch history'] },
+  'm-app-swiggy': { i: '🛵', tag: 'Real app', t: 'Swiggy', c: '#fb923c', simple: 'How the three layers show up when you order food:',
+    pts: ['🎨 <b>Frontend:</b> the menu, cart and “Place Order” button', '⚙️ <b>Backend:</b> checks the order, payment and restaurant availability', '🗄️ <b>Database:</b> stores menus, orders and delivery status'] },
+  'm-app-maps': { i: '🗺️', tag: 'Real app', t: 'Google Maps', c: COL.fe, simple: 'How the three layers show up when you search for a route:',
+    pts: ['🎨 <b>Frontend:</b> the map, pins and the blue route line', '⚙️ <b>Backend:</b> calculates routes and travel time', '🗄️ <b>Database:</b> stores map and place information'] },
+  'm-sw-1': { i: '📱', tag: 'Swiggy · Step 1', t: 'Screen', c: COL.fe,
+    simple: 'You choose biryani, pick an address and tap <b>Order</b>. The screen collects your choices. Nothing is saved yet.',
+    ex: 'The cart screen holds: 1 × Chicken Biryani, delivery address, payment method.' },
+  'm-sw-2': { i: '📨', tag: 'Swiggy · Step 2', t: 'API', c: '#22d3ee',
+    simple: 'An <b>API</b> is like a waiter. It carries your request from the app to the kitchen (server) and brings the reply back.',
+    ex: 'The app sends something like:', code: 'POST /orders\n{ "item": "Chicken Biryani", "qty": 1, "address": "Home" }' },
+  'm-sw-3': { i: '⚙️', tag: 'Swiggy · Step 3', t: 'Backend', c: COL.be,
+    simple: 'The server asks questions before accepting your order: Is the restaurant open? Is the item available? Is the price right? Did the payment succeed?',
+    ex: 'If everything is fine, the backend creates the order. If not, it sends back an error such as “Restaurant is closed”.' },
+  'm-sw-4': { i: '🗄️', tag: 'Swiggy · Step 4', t: 'Database', c: COL.db,
+    simple: 'The order and its status are stored. The status keeps changing as the order moves forward.',
+    ex: 'Placed → Preparing → Out for delivery → Delivered. This is also why you can see your order history next week.' },
+
+  /* ---------- Slide 3 ---------- */
+  'm-placeorder': { i: '🛒', tag: 'Keyword', t: '“Place Order”', c: COL.pk,
+    simple: 'One small button hides a long chain of events: the screen, the network, the server and the database all work together in under a second.',
+    ex: 'Try the ▶ <b>Play the journey</b> button on this slide to watch the chain light up.' },
+  'm-click-1': { i: '👆', tag: 'Journey · 01', t: 'You tap', c: COL.fe,
+    simple: 'Your tap creates an <b>event</b>, a tiny signal that says “something happened on screen”. JavaScript listens for these events.',
+    ex: 'Tap → the browser notices a click event on the “Place Order” button.', fact: 'Events are everywhere: clicks, key presses, scrolls, swipes and form submissions.' },
+  'm-click-2': { i: '📲', tag: 'Journey · 02', t: 'App responds', c: COL.be,
+    simple: 'The app usually shows a spinner right away so you know something is happening. At the same time it packs your data and sends a <b>request</b> over the internet.',
+    ex: 'The spinning “Placing your order…” animation appears while the request travels.' },
+  'm-click-3': { i: '🖥️', tag: 'Journey · 03', t: 'Server works', c: COL.pk,
+    simple: 'The server applies <b>business rules</b>: is the item in stock, is the payment valid, is a discount applicable?',
+    ex: 'A coupon like “FIRST50” is checked here, not on your phone.' },
+  'm-click-4': { i: '💾', tag: 'Journey · 04', t: 'Data changes', c: COL.db,
+    simple: 'The database stores the result. Then a response goes back and your screen changes to “Order placed ✅”.',
+    ex: 'A new order record is saved with your name, items, price and time.' },
+  'm-guess3': { i: '🤔', tag: 'Audience prompt', t: 'Guess before you check', c: COL.am,
+    simple: 'What do you think happens <b>first</b>: the database, the server or the screen? Pick one:',
+    q: [{ q: 'What happens first when you tap “Place Order”?', o: ['The database stores the order', 'The server applies business rules', 'The screen reacts to your tap'], a: 2, w: 'It starts on the screen. Your tap is the first event; the request then travels to the server, and only at the end does the database store the result.' }] },
+
+  /* ---------- Slide 4 ---------- */
+  'm-design': { i: '✏️', tag: 'Stage 1', t: 'Design', c: COL.fe,
+    simple: 'Before writing code, understand <b>who</b> the users are and <b>what</b> they need. Then sketch how the app should look and feel.',
+    ex: 'Designers draw wireframes (rough screen sketches) in tools like Figma before developers start building.' },
+  'm-build': { i: '🛠️', tag: 'Stage 2', t: 'Build', c: COL.be,
+    simple: 'Developers turn the design into real, working software: the screens, the APIs and the database.',
+    ex: 'This is where HTML, CSS, JavaScript, React, Spring Boot and SQL come together.' },
+  'm-test': { i: '🔍', tag: 'Stage 3', t: 'Test', c: COL.am,
+    simple: 'Check that the software does what it should and try to <b>find defects</b> (bugs) before the users do.',
+    ex: 'Try wrong passwords, empty forms and slow internet. If something breaks, fix it now.' },
+  'm-release': { i: '🚀', tag: 'Stage 4', t: 'Release', c: COL.db,
+    simple: 'Deploy the software so real users can use it, then keep <b>monitoring</b> for problems and improving it.',
+    ex: 'App updates on your phone are releases. Each one fixes bugs or adds features.' },
+  'm-qc4': { i: '💡', tag: 'Quick check', t: 'Which problem does your app solve?', c: COL.fe, custom: 'qc4',
+    simple: 'Every successful app starts by solving a problem. Type the name of an app you use daily and complete the sentence.',
+    pts: ['📸 Instagram: helps you stay connected and share moments', '🗺️ Google Maps: helps you find the way', '🛵 Swiggy: helps you get food without cooking', '▶️ YouTube: helps you learn or relax'] },
+
+  /* ---------- Slide 5 ---------- */
+  'm-keyidea': { i: '🔑', tag: 'Key idea', t: 'Connections over frameworks', c: COL.am,
+    simple: 'Frameworks and tools change every few years. The flow stays the same: <b>screen → request → logic → data → response</b>.',
+    ex: 'If you understand the flow, learning a new framework is like learning a new brand of the same tool.',
+    q: [{ q: 'Which is more valuable long-term?', o: ['Memorising every framework', 'Understanding how the layers connect'], a: 1, w: 'Frameworks come and go; the connections between layers stay the same.' }] },
+
+  /* ---------- Slide 6 ---------- */
+  'm-html': { i: '🏗️', tag: 'Frontend · Structure', t: 'HTML', c: '#fb923c',
+    simple: 'HyperText Markup Language is the <b>skeleton</b> of a web page. It says what is on the page: headings, paragraphs, images, forms and buttons.',
+    code: '<h1>Hello</h1>\n<input placeholder="Your name">\n<button>Submit</button>',
+    fact: 'HTML was invented by Tim Berners-Lee around 1990 at CERN, together with the first web browser.' },
+  'm-css': { i: '🎨', tag: 'Frontend · Presentation', t: 'CSS', c: COL.fe,
+    simple: 'Cascading Style Sheets are the <b>paint and decoration</b>: colours, fonts, spacing and layout. CSS also makes a page adapt to phones, tablets and laptops (responsive design).',
+    code: 'button {\n  background: royalblue;\n  color: white;\n  border-radius: 8px;\n}' },
+  'm-bootstrap': { i: '🧰', tag: 'Frontend · Toolkit', t: 'Bootstrap', c: '#c4b5fd',
+    simple: 'Bootstrap is a ready-made CSS toolkit with pretty buttons, grids and navigation bars, so you do not have to style everything from scratch.',
+    code: '<button class="btn btn-primary">Submit</button>', fact: 'Bootstrap was created at Twitter and released publicly in 2011.' },
+  'm-js': { i: '⚡', tag: 'Frontend · Interaction', t: 'JavaScript', c: COL.am,
+    simple: 'JavaScript makes a page <b>come alive</b>. It reacts to clicks, checks form input, does calculations and changes the page without reloading.',
+    code: 'button.addEventListener("click", () => {\n  alert("Hello " + name.value);\n});',
+    fact: 'Brendan Eich created the first version of JavaScript in about 10 days in 1995.' },
+  'm-react': { i: '⚛️', tag: 'Frontend · Components', t: 'React', c: '#22d3ee',
+    simple: 'React is a JavaScript library for building interfaces from small reusable pieces called <b>components</b>, like LEGO bricks. Data that can change is called <b>state</b>. When state changes, React updates the screen for you.',
+    code: 'function Greeting({ name }) {\n  return <h1>Hello, {name}!</h1>;\n}',
+    fact: 'React was created at Facebook and open-sourced in 2013.' },
+  'm-demo6': { i: '🧪', tag: 'Mini demo', t: 'Try the mini demo', c: COL.fe, custom: 'demo6',
+    simple: 'Show a form → type a name → click Submit → display a greeting. Try it yourself:' },
+
+  /* ---------- Slide 7 ---------- */
+  'm-api': { i: '📬', tag: 'Key concept', t: 'What is an API?', c: COL.pk,
+    simple: 'API stands for Application Programming Interface: a set of rules that lets one program talk to another. A <b>REST API</b> uses web addresses (URLs) and returns data, usually in <b>JSON</b> format.',
+    ex: 'Ask for a user and get JSON back:', code: 'GET /users/42\n→ { "id": 42, "name": "Asha" }',
+    pts: ['<b>200</b> = OK', '<b>404</b> = not found', '<b>401</b> = not allowed, please log in', '<b>500</b> = the server had a problem'],
+    fact: 'Postman is a popular tool for trying out APIs without writing a frontend.' },
+  'm-springboot': { i: '☕', tag: 'Backend option', t: 'Java + Spring Boot', c: COL.be,
+    simple: '<b>Java</b> is an object-oriented language that runs on the JVM, so the same program can run on Windows, Mac or Linux. <b>Spring Boot</b> is a framework that sets up a web server and API with very little configuration.',
+    code: '@GetMapping("/hello")\npublic String hello() {\n  return "Hello, student!";\n}',
+    pts: ['Widely used in large company (enterprise) systems', 'Strong tooling for security, databases and microservices'],
+    fact: 'Java was first called “Oak”, after a tree outside its creator’s office window.' },
+  'm-pythonnet': { i: '🐍', tag: 'Backend options', t: 'Python / .NET', c: COL.pk,
+    simple: '<b>Python</b> has simple, readable syntax and frameworks like Django, Flask and FastAPI. It is also popular for automation and AI. <b>.NET</b> is Microsoft’s platform (often with C# and ASP.NET Core), common in business applications.',
+    ex: 'Same idea, different language: all three can expose the same “/login” API for a React app.' },
+  'm-datalayer': { i: '🗃️', tag: 'Data layer', t: 'SQL (MySQL) vs MongoDB', c: COL.db, custom: 'datalayer',
+    simple: 'Pick the database that fits the shape of your data.',
+    tabs: [
+      { label: '📊 SQL (MySQL)', html: '<p>Stores data in <b>tables</b> with rows and columns. Every row follows the same structure. Tables can be linked together with <b>joins</b>.</p><pre class="code">users\nid | name  | email\n1  | Asha  | asha@mail.com\n2  | Ravi  | ravi@mail.com</pre><p class="sm" style="margin-top:8px">Great for: orders, payments, anything with clear relationships.</p>' },
+      { label: '📄 MongoDB', html: '<p>Stores data as flexible <b>documents</b> that look like JSON. Different documents can have different fields.</p><pre class="code">{ "name": "Asha",\n  "email": "asha@mail.com",\n  "hobbies": ["chess", "coding"] }</pre><p class="sm" style="margin-top:8px">Great for: profiles, catalogues, content that changes shape.</p>' }],
+    fact: 'The name MongoDB comes from the word “humongous”.' },
+  'm-demo7': { i: '💾', tag: 'Demo prompt', t: 'Where is the profile saved?', c: COL.db,
+    simple: 'A user profile must be saved and loaded again tomorrow. Which layer stores it?',
+    q: [{ q: 'Which layer stores the profile so it can be loaded tomorrow?', o: ['The browser screen (frontend)', 'The backend code, only while it is running', 'The database'], a: 2, w: 'Screens and running code forget things when closed or restarted. The database keeps data persistently.' }] },
+
+  /* ---------- Slide 8 ---------- */
+  'm-seq-1': { i: '⚛️', tag: 'Login journey · 1', t: 'React UI', c: COL.fe,
+    simple: 'A React login form collects the email and password. It can do quick checks (like “is the email empty?”) before sending anything.' },
+  'm-seq-2': { i: '📨', tag: 'Login journey · 2', t: 'API request', c: '#22d3ee',
+    simple: 'The browser sends the data to the server as a request, usually over secure HTTPS.', code: 'POST /api/login\n{ "email": "asha@mail.com", "password": "••••••" }' },
+  'm-seq-3': { i: '⚙️', tag: 'Login journey · 3', t: 'Backend', c: COL.be,
+    simple: 'The backend validates the input (not empty, correct format) and applies rules (is the account locked?). It then asks the database for the user.',
+    fact: 'Real systems never store plain passwords. They store a hashed (scrambled) version.' },
+  'm-seq-4': { i: '🗄️', tag: 'Login journey · 4', t: 'Database', c: COL.db,
+    simple: 'The database looks for the record that matches the email and returns it to the backend (or returns nothing if there is no match).' },
+  'm-seq-5': { i: '✅', tag: 'Login journey · 5', t: 'Response', c: COL.pk,
+    simple: 'The server answers with success or error and the screen reacts to it.',
+    pts: ['✅ <b>Success</b> → take the user to the dashboard', '❌ <b>Error</b> → show “Invalid email or password”'] },
+  'm-debug8': { i: '🕵️', tag: 'Ask the room', t: 'Login works, but the user is not found', c: COL.am,
+    simple: 'Think like a detective. The request reached the backend and the rules ran, but the user lookup returned nothing. Where do you look first?',
+    q: [{ q: 'Where would you investigate first?', o: ['The CSS file that styles the login button', 'The database query and the stored data (does the record exist, is the email spelled the same?)', 'The browser font settings'], a: 1, w: 'The login flow itself is working. The lookup found nothing, so check the query, the field names and the data: is the user in the database, is the email stored in the same format, and are you connected to the right database?' }] },
+
+  /* ---------- Slide 9 ---------- */
+  'm-unit': { i: '🔬', tag: 'Testing · Level 1', t: 'Unit tests', c: COL.db,
+    simple: 'Test one small function <b>on its own</b>. They are fast and tell you exactly which function broke.',
+    code: 'add(2, 3)  →  expect 5', ex: 'Tools: JUnit for Java, Jest for JavaScript.' },
+  'm-integration': { i: '🔗', tag: 'Testing · Level 2', t: 'Integration tests', c: COL.am,
+    simple: 'Check that different parts <b>work together</b>, such as the API and the database.',
+    ex: 'Call POST /users and then check that a new row really exists in the database.' },
+  'm-system': { i: '🧪', tag: 'Testing · Level 3', t: 'System / UI tests', c: COL.pk,
+    simple: 'Test the complete journey like a real user: open the page, type, click and see the result.',
+    ex: 'Open the app → log in → see “Welcome, Asha”. Tools: Selenium, Cypress.' },
+  'm-bug9': { i: '🐞', tag: 'Bug challenge', t: 'Login accepts an empty password', c: COL.rd,
+    simple: 'Something is wrong! Answer the two questions to solve the challenge.',
+    q: [{ q: 'What should happen when the password is empty?', o: ['Log the user in anyway', 'Reject the login and show a message like “Password is required”', 'Crash the server'], a: 1, w: 'Empty input should be rejected with a clear message.' },
+        { q: 'Which test is the fastest and cheapest to catch this?', o: ['A unit test on the validation function', 'A manual test every Friday', 'Wait for users to complain'], a: 0, w: 'A unit test runs in milliseconds. You can also add an integration test (API returns an error) and a UI test (message shown).' }],
+    fact: 'In 1947, engineers found a real moth stuck inside the Harvard Mark II computer and taped it into the logbook as the “first actual case of bug being found”. The word “bug” for a fault was already in use before that.' },
+
+  /* ---------- Slide 10 ---------- */
+  'm-sdlc': { i: '🔄', tag: 'Key concept', t: 'SDLC', c: COL.fe,
+    simple: 'The Software Development Life Cycle is a repeatable recipe teams follow to build software: from understanding needs to keeping it running.',
+    ex: 'Think of building a house: understand the family’s needs, plan, draw the blueprint, build, inspect, hand over the keys, then repair and improve.' },
+  'm-sdlc-1': { i: '📝', tag: 'SDLC · 01', t: 'Requirements', c: '#38bdf8', simple: 'Find out <b>what to build</b> by talking to users and stakeholders.', ex: '“Students must be able to sign in and see their courses.”' },
+  'm-sdlc-2': { i: '📅', tag: 'SDLC · 02', t: 'Planning', c: '#60a5fa', simple: 'Decide the <b>scope and schedule</b>: what comes first, who does it and how long it takes.', ex: 'Login in week 1, course list in week 2.' },
+  'm-sdlc-3': { i: '📐', tag: 'SDLC · 03', t: 'Design', c: '#a78bfa', simple: 'Decide the <b>architecture and UI</b>: which technologies, how the layers connect and how screens look.', ex: 'React screens + Spring Boot API + SQL database.' },
+  'm-sdlc-4': { i: '💻', tag: 'SDLC · 04', t: 'Development', c: '#f472b6', simple: 'Developers <b>write the code</b> following the design.', ex: 'Building the login form, the login API and the user table.' },
+  'm-sdlc-5': { i: '🔍', tag: 'SDLC · 05', t: 'Testing', c: '#fbbf24', simple: '<b>Verify quality</b> with unit, integration and UI tests, and fix the defects found.', ex: 'Wrong password? Empty form? Slow network?' },
+  'm-sdlc-6': { i: '🚀', tag: 'SDLC · 06', t: 'Deployment', c: '#34d399', simple: '<b>Release</b> the software to real users on servers or in the cloud.', ex: 'Package with Docker, run on AWS.' },
+  'm-sdlc-7': { i: '🛠️', tag: 'SDLC · 07', t: 'Maintenance', c: '#22d3ee', simple: '<b>Fix and improve</b> after release based on feedback, bug reports and new needs.', ex: 'Users want “Forgot password”. That is a new requirement.' },
+  'm-loop10': { i: '♻️', tag: 'Key idea', t: 'The cycle continues', c: COL.fe,
+    simple: 'Feedback after launch feeds into new requirements, and the loop starts again. Many teams run short loops called <b>sprints</b> (often 1–4 weeks) in an approach called <b>Agile</b>.',
+    fact: 'The Agile Manifesto was written in 2001 by a group of 17 software developers.' },
+  'm-disc10': { i: '💬', tag: 'Discussion', t: 'Users say a feature is confusing', c: COL.am,
+    simple: 'Talk with your neighbour for 30 seconds: which phase would you revisit? Then reveal a suggested answer.',
+    reveal: { label: '👀 Reveal a suggested answer', html: '<b>Design.</b> A confusing feature is usually a design problem (the layout or wording). You might also go back to <b>Requirements</b> if the team misunderstood what users needed. Since the software is already live, this feedback arrives during <b>Maintenance</b>, which then starts a new loop.' } },
+
+  /* ---------- Slide 11 ---------- */
+  'm-learn': { i: '📚', tag: 'Roadmap · Step 1', t: 'Learn', c: COL.fe,
+    simple: 'Go <b>deep</b> in one language instead of skimming five. Add <b>DSA</b> (data structures and algorithms), <b>SQL</b> and web fundamentals.',
+    pts: ['One language: for example Java or Python', 'DSA: arrays, strings, sorting, searching, recursion', 'SQL: SELECT, JOIN, GROUP BY', 'Web: HTML, CSS, JavaScript'] },
+  'm-build11': { i: '🛠️', tag: 'Roadmap · Step 2', t: 'Build', c: COL.be,
+    simple: 'Two or three <b>complete</b> projects beat ten half-finished ones. Put them on GitHub with a README that explains what, why and how.',
+    ex: 'A README with a screenshot, setup steps and the tech used makes your project easy to understand in 30 seconds.' },
+  'm-connect': { i: '🤝', tag: 'Roadmap · Step 3', t: 'Connect', c: COL.pk,
+    simple: 'Learning with others speeds you up. Join communities, share what you build and ask for feedback.',
+    ex: 'Post a short LinkedIn update about your project and what you learnt.' },
+  'm-apply': { i: '🎯', tag: 'Roadmap · Step 4', t: 'Apply', c: COL.db,
+    simple: 'Prepare a clear one-page resume, practise interviews and learn to <b>explain your decisions</b>: why this database, why this design?',
+    ex: 'Practise saying: “I chose SQL because my data has clear relationships.”' },
+  'm-sig-1': { i: '🧩', tag: 'Employer signal', t: 'Problem solving', c: COL.fe, simple: 'Breaking a big problem into small steps and finding a solution. Interviews and DSA practice test this.' },
+  'm-sig-2': { i: '🗣️', tag: 'Employer signal', t: 'Communication', c: COL.be, simple: 'Explaining your ideas clearly to teammates, testers and non-technical people.' },
+  'm-sig-3': { i: '🧪', tag: 'Employer signal', t: 'Demonstrable projects', c: COL.db, simple: 'Projects with a live link or a short demo prove you can build, not only study.' },
+
+  /* ---------- Slide 12 ---------- */
+  'm-jd': { i: '💼', tag: 'Career skill', t: 'How to read a job description', c: COL.fe,
+    simple: 'A job description lists <b>responsibilities</b> (what you will do) and <b>skills</b> (what you should know). “Good to have” skills are a bonus, not a must.',
+    pts: ['Tata Consultancy Services (TCS) is an IT services and consulting company', 'Highlight the skills that repeat. They matter most', 'Do not wait to match 100% before applying'] },
+  'm-java': { i: '☕', tag: 'Required skill', t: 'Java', c: '#fb923c',
+    simple: 'A popular, object-oriented language used for enterprise software. <b>Core Java 8+</b> covers OOP (classes, inheritance), collections (lists, maps) and streams (processing data in a pipeline).',
+    code: 'List<Integer> evens = numbers.stream()\n  .filter(n -> n % 2 == 0)\n  .collect(Collectors.toList());' },
+  'm-sql': { i: '📊', tag: 'Required skill', t: 'SQL', c: COL.be,
+    simple: 'SQL is the language for asking relational databases questions. <b>Joins</b> combine tables, <b>indexes</b> make searches faster and <b>query optimisation</b> keeps queries efficient.',
+    code: 'SELECT u.name, o.total\nFROM users u\nJOIN orders o ON o.user_id = u.id;', fact: 'An index works like the index at the back of a book. It helps you find things without reading every page.' },
+  'm-aws': { i: '☁️', tag: 'Required skill', t: 'AWS', c: '#fb923c',
+    simple: 'Amazon Web Services lets you rent computing power and storage instead of buying servers.',
+    pts: ['<b>EC2</b>: virtual servers', '<b>S3</b>: file and image storage', '<b>RDS</b>: managed databases', '<b>IAM</b>: who is allowed to do what'],
+    fact: 'Amazon S3, one of the first big AWS services, launched in 2006.' },
+  'm-docker': { i: '🐳', tag: 'Required skill', t: 'Docker', c: '#38bdf8',
+    simple: 'Docker packs an app and everything it needs into a <b>container</b>. Like a shipping container, it can be moved anywhere and opens the same way.',
+    pts: ['<b>Image</b>: the recipe or template', '<b>Container</b>: a running copy of an image', '<b>Docker Compose</b>: starts several containers (app + database) together'],
+    fact: 'Docker was first released in 2013.' },
+  'm-git': { i: '🌿', tag: 'Good to have', t: 'Git', c: COL.fe, simple: 'Git tracks every change to your code so you can go back in time and work with teammates without overwriting each other. GitHub is a website to share Git projects.' },
+  'm-junit': { i: '✅', tag: 'Good to have', t: 'JUnit', c: COL.am, simple: 'The most common tool for writing unit tests in Java.', code: '@Test\nvoid addsNumbers() {\n  assertEquals(5, add(2, 3));\n}' },
+  'm-cicd': { i: '🏭', tag: 'Good to have', t: 'CI/CD', c: COL.db, simple: '<b>Continuous Integration</b> automatically builds and tests code every time someone pushes it. <b>Continuous Delivery/Deployment</b> automatically releases it.', ex: 'Push code → tests run → if they pass, the app is deployed.' },
+  'm-agile': { i: '🏃', tag: 'Good to have', t: 'Agile / Scrum', c: COL.pk, simple: 'A way of working in short cycles (sprints). The team plans, builds, shows progress and learns from feedback every 1–4 weeks.', pts: ['Daily short stand-up meeting', 'Sprint planning and review', 'Product owner prioritises the work'] },
+
+  /* ---------- Slide 13 ---------- */
+  'm-ai-1': { i: '⚡', tag: 'Why 1', t: 'Build faster', c: COL.fe, simple: 'AI assistants can suggest code, write test cases, explain error messages and help you find bugs.', ex: 'Paste an error message and ask “what does this mean and how do I fix it?”', fact: 'Treat AI like a quick junior teammate: helpful, but you must review its work.' },
+  'm-ai-2': { i: '💬', tag: 'Why 2', t: 'Ship smarter products', c: COL.be, simple: 'Your app itself can use AI: a chatbot to answer questions, smarter search and automatic summaries.', ex: 'A course portal that summarises a long lecture into five key points.' },
+  'm-ai-3': { i: '🎓', tag: 'Why 3', t: 'Stay job-ready', c: COL.pk, simple: 'Employers expect developers to use AI tools wisely. Fundamentals still matter, because you need them to judge whether the AI’s answer is correct.' },
+  'm-ai-take': { i: '🧠', tag: 'Takeaway', t: 'Full stack + Generative AI', c: COL.am, simple: 'Frontend + backend + database lets you build the product. Generative AI lets you add intelligent features such as chat, search and summaries.',
+    q: [{ q: 'Which combination ships intelligent features?', o: ['Only frontend skills', 'Full stack skills + Generative AI', 'Only AI, no fundamentals'], a: 1, w: 'You need the whole stack to build and deliver a product, plus AI to make it intelligent.' }] },
+
+  /* ---------- Slide 14 ---------- */
+  'm-together': { i: '📦', tag: 'Takeaway', t: 'Docker + AWS', c: COL.db, simple: '<b>Docker</b> packs the app so it behaves the same everywhere. <b>AWS</b> gives it a place to run and scale.',
+    ex: 'Build the container on your laptop → push it → run the same container on AWS.', fact: 'This “build once, run anywhere” idea is why containers became so popular.' },
+
+  /* ---------- Slide 15 ---------- */
+  'm-lpa': { i: '🪙', tag: 'Key term', t: 'What is LPA?', c: COL.am, simple: 'LPA means <b>Lakhs Per Annum</b>: how much you earn in one year. One lakh is 1,00,000 (one hundred thousand).',
+    ex: '₹5 LPA = ₹5,00,000 per year, which is about ₹41,667 per month before tax.',
+    q: [{ q: 'What does ₹8 LPA mean?', o: ['₹8,000 per year', '₹8,00,000 per year', '₹80,00,000 per year'], a: 1, w: '8 lakhs = 8 × 1,00,000 = ₹8,00,000 per year.' }] },
+  'm-sal-1': { i: '🏠', tag: 'Illustrative range', t: 'Small companies', c: COL.fe, simple: 'Roughly ₹2.5–5 LPA. Teams are small, so you often wear many hats and learn quickly.' },
+  'm-sal-2': { i: '🏢', tag: 'Illustrative range', t: 'Mid-size companies', c: COL.be, simple: 'Roughly ₹4–8 LPA. More structure and training than small companies, with a good mix of learning and responsibility.' },
+  'm-sal-3': { i: '📦', tag: 'Illustrative range', t: 'Product-based companies', c: COL.pk, simple: 'Roughly ₹8–15+ LPA. These companies build their own products, and hiring usually has tougher problem-solving rounds.' },
+  'm-sal-4': { i: '🏆', tag: 'Illustrative range', t: 'Top tech companies', c: COL.db, simple: 'Roughly ₹12–30+ LPA. Very competitive, with strong expectations for DSA, system design and projects.' },
+  'm-focus15': { i: '🎯', tag: 'Focus', t: 'Skills and impact first', c: COL.db, simple: 'A package number is the <b>result</b>. Skills and evidence of impact (projects, internships, contributions) are what <b>produce</b> that result.', ex: 'Instead of “I know React”, say “I built a React app used by 50 classmates”.' },
+
+  /* ---------- Slide 17 ---------- */
+  'm-handoffs': { i: '🤝', tag: 'Takeaway', t: 'The hand-offs', c: COL.am, simple: 'Every feature passes information from layer to layer:',
+    pts: ['🎨 Frontend → <b>request</b> (JSON) → Backend', '⚙️ Backend → <b>query</b> → Database', '🗄️ Database → <b>data</b> → Backend → <b>response</b> → Frontend'],
+    ex: 'When something breaks, check each hand-off in order.' },
+
+  /* ---------- Slide 18 ---------- */
+  'm-step-1': { i: '🧩', tag: 'Next step · 01', t: 'Pick a problem', c: COL.fe, simple: 'Choose something real that you or your friends would use.', pts: ['📚 Study planner', '🧾 Expense splitter for hostel mates', '🏏 Match score tracker', '📝 Notes sharing app'] },
+  'm-step-2': { i: '🧱', tag: 'Next step · 02', t: 'Build one feature end to end', c: COL.be, simple: 'Do not build everything. Build <b>one</b> complete feature across all layers.', ex: 'Feature: “Add expense”. React form → Spring Boot API → SQL table → show it in a list.' },
+  'm-step-3': { i: '🚢', tag: 'Next step · 03', t: 'Test it and show it', c: COL.db, simple: 'Add tests, package it with Docker, deploy it and share the link with friends and in your resume.' },
+  'm-poll': { i: '🗳️', tag: 'Class poll', t: 'Which layer should we explore?', c: COL.pk, custom: 'poll', simple: 'Vote for the layer you would like to see in a live coding demo.' },
+
+  /* ---------- Slide 19 ---------- */
+  'm-think': { i: '🧠', tag: 'Habit 1', t: 'THINK', c: COL.fe, simple: 'Understand the problem before you write code. Ask: who is the user and what do they need?' },
+  'm-practise': { i: '💪', tag: 'Habit 2', t: 'PRACTISE', c: COL.be, simple: 'Skills grow with repetition. Code a little every day, build projects and repeat.' },
+  'm-solve': { i: '🧩', tag: 'Habit 3', t: 'SOLVE', c: COL.db, simple: 'Software exists to solve real problems. Break the problem down, solve each part and put it together.' },
+  'm-final': { i: '🎓', tag: 'Session complete', t: 'Thank you!', c: COL.pk, custom: 'final', simple: 'You made it to the end.' }
+};
+
+/* ---------- Slide quizzes (🎯 button) ---------- */
+const QUIZ = {
+  s1: [{ q: 'Which layer stores data permanently?', o: ['Frontend', 'Backend', 'Database'], a: 2, w: 'The database keeps data so it persists.' },
+       { q: 'Which layer is “what users see and touch”?', o: ['Frontend', 'Backend', 'Database'], a: 0, w: 'The frontend is the screen you interact with.' }],
+  s2: [{ q: 'In the Swiggy example, which step stores the order and its status?', o: ['Screen', 'API', 'Backend', 'Database'], a: 3, w: 'The database stores the order and its status.' },
+       { q: 'What does the API do?', o: ['Draws buttons', 'Carries requests between the app and the server', 'Stores orders', 'Tests code'], a: 1, w: 'Like a waiter, it carries requests and replies.' }],
+  s3: [{ q: 'A user taps “Place Order”. What begins the journey?', o: ['A database write', 'A user action', 'A server rule'], a: 1, w: 'The journey begins with the user’s action.' },
+       { q: 'Which step stores the result?', o: ['You tap', 'App responds', 'Server works', 'Data changes'], a: 3, w: '“Data changes” is where the database stores the result.' }],
+  s4: [{ q: 'Which stage checks expected behaviour and finds defects?', o: ['Design', 'Build', 'Test', 'Release'], a: 2, w: 'Testing finds defects.' },
+       { q: 'Is software development only about writing code?', o: ['Yes, only code', 'No: design, build, test, release and improve'], a: 1, w: 'It covers the whole process.' }],
+  s5: [{ q: 'Why do full stack developers debug better?', o: ['They investigate across layers instead of guessing', 'They never write bugs', 'They use only one tool'], a: 0, w: 'They can trace a problem through all the layers.' },
+       { q: '“Full stack” means…', o: ['Memorising every framework', 'Understanding the connections', 'Knowing only databases'], a: 1, w: 'It is about understanding the connections.' }],
+  s6: [{ q: 'Which technology gives a page its structure?', o: ['HTML', 'CSS', 'JavaScript'], a: 0, w: 'HTML is the skeleton.' },
+       { q: 'Which one handles events and validation?', o: ['HTML', 'JavaScript', 'Bootstrap'], a: 1, w: 'JavaScript makes pages interactive.' },
+       { q: 'Which one is for reusable components?', o: ['React', 'CSS', 'SQL'], a: 0, w: 'React builds UIs from components.' }],
+  s7: [{ q: 'Which of these is a document database?', o: ['MySQL', 'MongoDB', 'Spring Boot'], a: 1, w: 'MongoDB stores JSON-like documents.' },
+       { q: 'What does the backend do?', o: ['Exposes APIs and applies business rules', 'Only draws buttons', 'Only stores files'], a: 0, w: 'It exposes APIs, applies rules and works with data.' }],
+  s8: [{ q: 'Which step finds the matching user record?', o: ['React UI', 'API request', 'Backend', 'Database'], a: 3, w: 'The database finds the record.' },
+       { q: 'What does the server return at the end?', o: ['A bigger database', 'Success or error', 'A new React UI'], a: 1, w: 'The response is success or error.' }],
+  s9: [{ q: 'Which level checks that the API and database work together?', o: ['Unit', 'Integration', 'System / UI'], a: 1, w: 'Integration tests check that parts work together.' },
+       { q: 'Which level tests the complete user journey?', o: ['Unit', 'Integration', 'System / UI'], a: 2, w: 'System / UI tests follow the whole journey.' },
+       { q: 'What does a unit test check?', o: ['A small function', 'The whole app', 'The hosting bill'], a: 0, w: 'A unit test checks one small function.' }],
+  s10: [{ q: 'Which phase decides scope and schedule?', o: ['Requirements', 'Planning', 'Design'], a: 1, w: 'Planning = scope and schedule.' },
+        { q: 'Which phase is “fix and improve”?', o: ['Testing', 'Deployment', 'Maintenance'], a: 2, w: 'Maintenance = fix and improve.' },
+        { q: 'Where are architecture and UI decided?', o: ['Design', 'Development', 'Deployment'], a: 0, w: 'Design covers architecture and UI.' }],
+  s11: [{ q: 'Which step comes right after Build?', o: ['Learn', 'Connect', 'Apply'], a: 1, w: 'Learn → Build → Connect → Apply.' },
+        { q: 'What matters more than collecting tools?', o: ['A focused portfolio and strong fundamentals', 'More certificates only', 'Memorising frameworks'], a: 0, w: 'This is the slide’s main message.' }],
+  s12: [{ q: 'Which skill covers joins, indexing and query optimisation?', o: ['React', 'SQL', 'Docker'], a: 1, w: 'That is SQL.' },
+        { q: 'Which skill covers EC2, S3, RDS and IAM fundamentals?', o: ['AWS', 'Java', 'Postman'], a: 0, w: 'Those are AWS services.' },
+        { q: 'Which of these is listed as “Good to have”?', o: ['Git', 'Photoshop', 'COBOL'], a: 0, w: 'Git, JUnit, CI/CD and Agile / Scrum.' }],
+  s13: [{ q: 'Which is NOT one of the three “whys”?', o: ['Build faster', 'Ship smarter products', 'Replace all developers'], a: 2, w: 'The three are: Build faster, Ship smarter products, Stay job-ready.' },
+        { q: 'Full stack + Generative AI = ?', o: ['Developers who ship intelligent features', 'Fewer layers', 'No testing needed'], a: 0, w: 'That is the takeaway.' }],
+  s14: [{ q: 'Which tool ends “it works on my machine”?', o: ['Docker', 'CSS', 'JUnit'], a: 0, w: 'Containers run the same everywhere.' },
+        { q: 'Which lets you pay only for what you use?', o: ['AWS', 'HTML', 'Postman'], a: 0, w: 'Cloud billing is usage based.' }],
+  s15: [{ q: 'What does LPA stand for?', o: ['Lakhs Per Annum', 'Levels Per Application', 'Large Pay Allowance'], a: 0, w: 'Lakhs Per Annum.' },
+        { q: 'Which category has the widest illustrative range?', o: ['Small companies', 'Mid-size companies', 'Top tech companies'], a: 2, w: '₹12–30+ LPA is the widest range.' },
+        { q: 'What should you focus on?', o: ['Only the package number', 'Skills and evidence of impact'], a: 1, w: 'Build skills and evidence of impact.' }],
+  s18: [{ q: 'What is the first step?', o: ['Pick a problem', 'Deploy to AWS', 'Buy a course'], a: 0, w: '01 is Pick a problem.' },
+        { q: 'What does “one feature end to end” include?', o: ['Only HTML', 'React screen, Spring Boot API and a SQL table', 'Only a database'], a: 1, w: 'All the layers, working together.' }]
+};
+
+/* ---------- Fun facts (💡 button) ---------- */
+const FACTS = {
+  1: 'The word “stack” comes from layers stacked on top of each other: each layer relies on the one below it.',
+  2: 'Large apps are often built from many small services that work together, sometimes called microservices.',
+  3: 'Usability researcher Jakob Nielsen notes that a response within about 0.1 second feels instant to a user.',
+  4: 'Some large companies release changes to their products many times a day.',
+  5: 'Many startups hire a full stack developer first, because one person can build a first working version end to end.',
+  6: 'Brendan Eich created the first version of JavaScript in about 10 days in 1995, and today it runs in every web browser.',
+  7: 'Java was originally called “Oak”, and the name MongoDB comes from “humongous”.',
+  8: 'When you see a “404” error, the server is working fine. It just could not find what you asked for.',
+  9: 'In 1947 engineers found a real moth stuck in the Harvard Mark II computer and taped it into the logbook as the “first actual case of bug being found”. Engineers were already calling faults “bugs” by then.',
+  10: 'The Agile Manifesto was written in 2001 by 17 software developers.',
+  11: 'Many hiring managers like to open a candidate’s GitHub project and README to see how they think.',
+  12: 'Job descriptions often list “nice to have” skills. You can learn them on the job, so do not wait to match 100% before applying.',
+  13: 'AI coding assistants work like a fast junior pair programmer: very helpful, but you always review their output.',
+  14: 'Docker was first released in 2013, and Amazon S3 launched in 2006.',
+  15: '1 lakh = 1,00,000 and 1 crore = 100 lakh = 1,00,00,000.',
+  18: 'Many well-known apps started as small side projects that solved one person’s own problem.'
+};
+
+</script>
+<script>
+/* =====================================================================
+   APP ENGINE — navigation, modal system, quizzes, interactions.
+   Vanilla JS, no dependencies.
+   ===================================================================== */
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  const slides = $$('.slide');
+  const N = slides.length;
+  let cur = -1;
+
+  /* ---------------- Score ---------------- */
+  const earned = new Set();
+  const scoreEl = $('#score');
+  let totalQuestions = 1; // slide 16 question
+  Object.values(QUIZ).forEach(q => (totalQuestions += q.length));
+  Object.values(MODALS).forEach(m => { if (m.q) totalQuestions += m.q.length; });
+  const getScore = () => earned.size;
+  function earn(key) {
+    if (earned.has(key)) return false;
+    earned.add(key);
+    scoreEl.textContent = '⭐ ' + earned.size;
+    toast('+1 ⭐ Nice!');
+    return true;
+  }
+  let toastT;
+  function toast(msg) {
+    const t = $('#toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1400);
+  }
+
+  /* ---------------- Navigation ---------------- */
+  const prevBtn = $('#prev'), nextBtn = $('#next'), quizBtn = $('#quizBtn'), factBtn = $('#factBtn');
+  const quizDone = new Set();
+
+  function go(i) {
+    i = Math.max(0, Math.min(N - 1, i));
+    if (i === cur) return;
+    const dir = cur < 0 ? 0 : (i > cur ? 1 : -1);
+    const prev = slides[cur], next = slides[i];
+    clearPlay();
+    if (prev) {
+      prev.style.setProperty('--tx', (-dir * 60) + 'px');
+      prev.style.setProperty('--sc', '.97');
+      prev.classList.remove('active');
+      prev.setAttribute('inert', '');
+    }
+    next.classList.add('notrans');
+    next.style.setProperty('--tx', (dir * 60) + 'px');
+    next.style.setProperty('--sc', '.97');
+    next.scrollTop = 0;
+    void next.offsetWidth;
+    next.classList.remove('notrans');
+    next.style.removeProperty('--tx');
+    next.style.removeProperty('--sc');
+    next.classList.add('active');
+    next.removeAttribute('inert');
+    cur = i;
+    updateUI();
+    try { history.replaceState(null, '', '#' + (i + 1)); } catch (_) { /* file:// restrictions */ }
+  }
+  const next = () => go(cur + 1);
+  const prev = () => go(cur - 1);
+
+  function updateUI() {
+    const s = slides[cur];
+    $('#cnt').textContent = (cur + 1);
+    $('#tot').textContent = N;
+    $('#progress').style.width = ((cur + 1) / N * 100) + '%';
+    $('#progress').setAttribute('aria-valuenow', Math.round((cur + 1) / N * 100));
+    if ((cur === 0 && document.activeElement === prevBtn) || (cur === N - 1 && document.activeElement === nextBtn)) $('#stage').setAttribute('tabindex', '-1'), $('#stage').focus({ preventScroll: true });
+    prevBtn.disabled = cur === 0;
+    nextBtn.disabled = cur === N - 1;
+    const hasQuiz = !!s.dataset.quiz;
+    quizBtn.disabled = !hasQuiz;
+    quizBtn.classList.toggle('pulse', hasQuiz && !quizDone.has(s.dataset.quiz));
+    factBtn.disabled = !s.dataset.fact;
+    document.title = (cur + 1) + '/' + N + ' · ' + s.dataset.title + ' — Full Stack Developer Career Guide';
+    slides.forEach((sl, k) => sl.setAttribute('aria-hidden', k === cur ? 'false' : 'true'));
+  }
+
+  /* ---------------- Modal system ---------------- */
+  const modal = $('#modal'), card = $('#mCard'), mBody = $('#mBody');
+  let modalOpen = false, lastFocus = null, closeT;
+
+  function openModal(html, { color, wide, setup } = {}) {
+    clearTimeout(closeT);
+    if (!modalOpen) lastFocus = document.activeElement;
+    mBody.innerHTML = html;
+    card.style.setProperty('--c', color || 'var(--fe)');
+    card.classList.toggle('wide', !!wide);
+    modal.hidden = false;
+    modalOpen = true;
+    card.scrollTop = 0;
+    if (setup) setup(mBody);
+    requestAnimationFrame(() => { modal.classList.add('open'); card.focus({ preventScroll: true }); });
+  }
+  function closeModal() {
+    if (!modalOpen) return;
+    modalOpen = false;
+    modal.classList.remove('open');
+    closeT = setTimeout(() => { if (!modalOpen) { modal.hidden = true; mBody.innerHTML = ''; } }, 300);
+    if (lastFocus && lastFocus.focus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+  }
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  $('#mClose').addEventListener('click', closeModal);
+
+  function trapFocus(e) {
+    const f = $$('button:not(:disabled),[href],input,[tabindex]:not([tabindex="-1"])', card).filter(el => el.offsetParent !== null || el === card);
+    if (!f.length) { e.preventDefault(); return; }
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === card)) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  /* ---- build popup from MODALS data ---- */
+  function head(m) {
+    return `<div class="m-head"><div class="m-ico" aria-hidden="true">${m.i}</div><div><div class="m-tag">${m.tag}</div><h2 class="m-title" id="mTitle">${m.t}</h2></div></div>`;
+  }
+  function sec(h, body, cls = '') { return `<div class="m-sec ${cls}"><h4>${h}</h4>${body}</div>`; }
+
+  function openById(id) {
+    const m = MODALS[id];
+    if (!m) { console.warn('Missing modal', id); return; }
+    let h = head(m);
+    if (m.simple) {
+      const label = (m.q && !m.ex && !m.pts) ? '🎯 Your turn' : (m.custom ? '👇 Try it' : '🧒 In simple words');
+      h += sec(label, `<p>${m.simple}</p>`);
+    }
+    if (m.tabs) {
+      h += `<div class="tabs" role="tablist">${m.tabs.map((t, k) => `<button class="tab" role="tab" aria-selected="${k === 0}" data-tab="${k}">${t.label}</button>`).join('')}</div><div class="m-sec" id="tabPane">${m.tabs[0].html}</div>`;
+    }
+    if (m.ex || m.code) {
+      h += sec('🌍 Example', (m.ex ? `<p>${m.ex}</p>` : '') + (m.code ? `<pre class="code">${esc(m.code)}</pre>` : ''), 'ex');
+    }
+    if (m.pts) h += sec('📌 Key points', `<ul>${m.pts.map(p => `<li>${p}</li>`).join('')}</ul>`);
+    if (m.reveal) h += `<button class="reveal-btn" id="revBtn">${m.reveal.label}</button><div class="reveal-box" id="revBox" hidden>${m.reveal.html}</div>`;
+    if (m.custom) h += `<div id="customHost"></div>`;
+    if (m.q) h += `<div id="quizHost"></div>`;
+    if (m.fact) h += sec('💡 Fun fact', `<p>${m.fact}</p>`, 'fact');
+    openModal(h, {
+      color: m.c,
+      setup(root) {
+        if (m.tabs) {
+          $$('.tab', root).forEach(b => b.addEventListener('click', () => {
+            $$('.tab', root).forEach(x => x.setAttribute('aria-selected', x === b));
+            $('#tabPane', root).innerHTML = m.tabs[+b.dataset.tab].html;
+          }));
+        }
+        if (m.reveal) $('#revBtn', root).addEventListener('click', () => { $('#revBox', root).hidden = false; $('#revBtn', root).hidden = true; });
+        if (m.custom) CUSTOM[m.custom]($('#customHost', root), m);
+        if (m.q) mountQuiz($('#quizHost', root), m.q, id);
+      }
+    });
+  }
+
+  /* ---------------- Quiz engine ---------------- */
+  function mountQuiz(host, qs, key, onFinish) {
+    let idx = 0, right = 0;
+    const L = 'ABCD';
+    function show() {
+      const q = qs[idx];
+      host.innerHTML = `<div class="qz">
+        ${qs.length > 1 ? `<div class="qz-top"><span>QUESTION ${idx + 1} / ${qs.length}</span><span>⭐ ${right}</span></div><div class="qz-bar"><i style="width:${idx / qs.length * 100}%"></i></div>` : ''}
+        <div class="qz-q">${q.q}</div>
+        <div class="qz-opts">${q.o.map((o, k) => `<button class="qz-opt" data-k="${k}"><b>${L[k]}</b><span>${o}</span></button>`).join('')}</div>
+        <div class="qz-why" hidden></div><div class="qz-next"></div></div>`;
+      $$('.qz-opt', host).forEach(b => b.addEventListener('click', () => answer(+b.dataset.k)));
+      if (idx > 0) { const f = $('.qz-opt', host); if (f) f.focus({ preventScroll: true }); }
+    }
+    function answer(k) {
+      const q = qs[idx];
+      const opts = $$('.qz-opt', host);
+      opts.forEach((b, j) => { b.disabled = true; if (j === q.a) b.classList.add('ok'); else if (j === k) b.classList.add('bad'); });
+      const ok = k === q.a;
+      if (ok) { right++; earn(key + ':' + idx); }
+      const why = $('.qz-why', host);
+      why.hidden = false;
+      why.innerHTML = (ok ? '🎉 <b>Correct!</b> ' : '🤔 <b>Not quite.</b> ') + q.w;
+      const nx = $('.qz-next', host);
+      if (idx < qs.length - 1) {
+        nx.innerHTML = '<button class="btn" id="qNext">Next question →</button>';
+        $('#qNext', host).addEventListener('click', () => { idx++; show(); });
+        $('#qNext', host).focus();
+      } else if (qs.length > 1) {
+        nx.innerHTML = '<button class="btn" id="qNext">See my result 🏁</button>';
+        $('#qNext', host).addEventListener('click', finish);
+        $('#qNext', host).focus();
+      }
+    }
+    function finish() {
+      const pct = right / qs.length;
+      host.innerHTML = `<div class="qz qz-done"><div class="big">${pct === 1 ? '🏆' : pct >= .5 ? '👏' : '💪'}</div>
+        <h3>${right} / ${qs.length} correct</h3>
+        <p class="sm">${pct === 1 ? 'Perfect! You really understood this slide.' : pct >= .5 ? 'Nice work! Review the popups on this slide and try again.' : 'Good try! Explore the glowing cards on the slide, then try again.'}</p>
+        <div class="qz-next" style="justify-content:center;gap:10px"><button class="btn ghost" id="qAgain">↺ Try again</button><button class="btn" id="qClose">Done</button></div></div>`;
+      $('#qAgain', host).addEventListener('click', () => { idx = 0; right = 0; show(); });
+      $('#qClose', host).addEventListener('click', closeModal);
+      quizDone.add(key); if (cur >= 0) updateUI();
+      if (onFinish) onFinish();
+    }
+    show();
+  }
+
+  function openSlideQuiz() {
+    const s = slides[cur], key = s.dataset.quiz;
+    if (!key || !QUIZ[key]) return;
+    openModal(head({ i: '🎯', tag: 'Quick quiz · Slide ' + (cur + 1), t: 'Knowledge check' }) + `<div id="quizHost"></div>`, {
+      color: 'var(--pink)', setup(root) { mountQuiz($('#quizHost', root), QUIZ[key], key); }
+    });
+  }
+  function openFact() {
+    const f = FACTS[slides[cur].dataset.fact];
+    if (!f) return;
+    openModal(head({ i: '💡', tag: 'Slide ' + (cur + 1), t: 'Did you know?' }) + sec('💡 Fun fact', `<p style="font-size:1.1rem">${f}</p>`, 'fact'), { color: 'var(--amber)' });
+  }
+
+  /* ---------------- Custom popup widgets ---------------- */
+  const CUSTOM = {
+    qc4(host) {
+      host.innerHTML = `<form class="demo-form" id="qcForm"><label class="sm" for="qcApp">Your app</label><input class="inp" id="qcApp" maxlength="40" placeholder="e.g. Instagram" autocomplete="off"><button class="btn" type="submit">Complete the sentence ✍️</button></form><div id="qcOut"></div>`;
+      $('#qcForm', host).addEventListener('submit', e => {
+        e.preventDefault();
+        const v = $('#qcApp', host).value.trim();
+        $('#qcOut', host).innerHTML = v ? `<div class="greet" style="margin-top:12px">💬 “${esc(v)} helps me ____.” <div class="sm" style="margin-top:6px;font-weight:400">Say your sentence out loud to the class!</div></div>` : `<div class="sm" style="margin-top:10px">✍️ Type an app name first.</div>`;
+      });
+      setTimeout(() => $('#qcApp', host) && $('#qcApp', host).focus(), 350);
+    },
+    demo6(host) {
+      host.innerHTML = `<form class="demo-form" id="dmForm"><label class="sm" for="dmName">1 · Type a name</label><input class="inp" id="dmName" maxlength="30" placeholder="Your name" autocomplete="off"><button class="btn" type="submit">2 · Submit</button></form><div id="dmOut" aria-live="polite"></div>`;
+      $('#dmForm', host).addEventListener('submit', e => {
+        e.preventDefault();
+        const v = $('#dmName', host).value.trim();
+        $('#dmOut', host).innerHTML = v ? `<div class="greet" style="margin-top:12px">3 · Hello, ${esc(v)}! 👋</div><p class="sm" style="margin-top:8px">That was a form (HTML), styled (CSS) and made interactive (JavaScript).</p>` : `<div class="sm" style="margin-top:10px">Please type a name first 🙂</div>`;
+      });
+      setTimeout(() => $('#dmName', host) && $('#dmName', host).focus(), 350);
+    },
+    datalayer() { /* tabs are generic */ },
+    poll(host) {
+      const opts = [['🎨 Frontend', 'var(--fe)'], ['⚙️ Backend', 'var(--be)'], ['🗄️ Database', 'var(--db)']];
+      let votes = [0, 0, 0];
+      try { votes = JSON.parse(localStorage.getItem('fsPoll') || '[0,0,0]'); } catch (_) { /* ignore */ }
+      function draw() {
+        const tot = votes.reduce((a, b) => a + b, 0) || 1;
+        host.innerHTML = `<div class="demo-form">${opts.map((o, k) => `<button class="btn ghost" data-v="${k}" style="--c:${o[1]};justify-content:flex-start">${o[0]}</button>`).join('')}</div>
+        <div style="margin-top:14px">${opts.map((o, k) => `<div class="poll-row" style="--c:${o[1]}"><span>${o[0]}</span><div class="poll-bar"><i style="width:${votes[k] / tot * 100}%"></i></div><b>${votes[k]}</b></div>`).join('')}</div>
+        <div class="qz-next"><button class="btn ghost" id="pollReset">↺ Reset poll</button></div>`;
+        $$('[data-v]', host).forEach(b => b.addEventListener('click', () => { votes[+b.dataset.v]++; save(); draw(); }));
+        $('#pollReset', host).addEventListener('click', () => { votes = [0, 0, 0]; save(); draw(); });
+      }
+      function save() { try { localStorage.setItem('fsPoll', JSON.stringify(votes)); } catch (_) { /* ignore */ } }
+      draw();
+    },
+    final(host) {
+      const s = getScore();
+      host.innerHTML = `<div class="qz-done"><div class="big">🎓</div><h3>You earned ⭐ ${s} / ${totalQuestions}</h3><p class="sm">${s === 0 ? 'Go back and try the 🎯 quizzes on each slide to collect stars!' : 'Great participation. Now go and build something!'}</p><div class="qz-next" style="justify-content:center;gap:10px"><button class="btn ghost" id="fnHome">↺ Start over</button><button class="btn" id="fnClose">Close</button></div></div>`;
+      $('#fnHome', host).addEventListener('click', () => { closeModal(); go(0); });
+      $('#fnClose', host).addEventListener('click', closeModal);
+    }
+  };
+
+  /* ---------------- Overview & help ---------------- */
+  function openOverview() {
+    const h = head({ i: '🧭', tag: 'Home / Overview', t: 'All slides' }) +
+      `<div class="ov-grid">${slides.map((s, k) => `<button class="ov-card${k === cur ? ' cur' : ''}" data-slide="${k}"><span class="n">${s.dataset.emoji} &nbsp;SLIDE ${String(k + 1).padStart(2, '0')}</span><span class="t">${esc(s.dataset.title)}</span></button>`).join('')}</div>`;
+    openModal(h, { color: 'var(--fe)', wide: true, setup(root) {
+      $$('[data-slide]', root).forEach(b => b.addEventListener('click', () => { const k = +b.dataset.slide; lastFocus = null; closeModal(); go(k); $('#stage').setAttribute('tabindex', '-1'); $('#stage').focus({ preventScroll: true }); }));
+    } });
+  }
+
+  /* ---------------- Flow animations ---------------- */
+  let playTimers = [];
+  function clearPlay() {
+    playTimers.forEach(clearTimeout); playTimers = [];
+    $$('.node.lit').forEach(n => n.classList.remove('lit'));
+    $$('.track.run,.packet.run').forEach(n => n.classList.remove('run'));
+  }
+  function play(btn) {
+    clearPlay();
+    const target = $(btn.dataset.play);
+    if (!target) return;
+    const nodes = $$('.node', target);
+    const step = +(btn.dataset.step || 800);
+    ['track', 'packet'].forEach(a => {
+      if (btn.dataset[a]) { const el = $(btn.dataset[a]); if (el) { void el.offsetWidth; el.classList.add('run'); } }
+    });
+    nodes.forEach((n, k) => playTimers.push(setTimeout(() => { nodes.forEach(x => x.classList.remove('lit')); n.classList.add('lit'); }, k * step)));
+    playTimers.push(setTimeout(clearPlay, nodes.length * step + 700));
+  }
+
+  /* ---------------- Slide 16 MCQ ---------------- */
+  (function mcq() {
+    const s = $('.s16'); if (!s) return;
+    const opts = $$('.opt', s), reveal = $('#revealBtn'), status = $('#revealStatus');
+    let sel = null, done = false;
+    const init = '👆 Pick A, B, C or D first (or reveal straight away!).';
+    opts.forEach(o => o.addEventListener('click', () => {
+      if (done) return;
+      sel = o.dataset.opt;
+      opts.forEach(x => { x.classList.toggle('sel', x === o); x.setAttribute('aria-checked', x === o); });
+      status.textContent = '🔒 You chose ' + sel + '. Now click “Reveal answer”.';
+    }));
+    reveal.addEventListener('click', () => {
+      if (done) return;
+      done = true;
+      opts.forEach(x => {
+        x.classList.remove('sel');
+        if (x.dataset.opt === 'C') x.classList.add('ok');
+        else if (x.dataset.opt === sel) x.classList.add('bad');
+      });
+      let msg;
+      if (sel === 'C') { msg = '🎉 Correct! The answer is C, Database.'; earn('s16'); }
+      else if (sel) msg = '🤔 Not quite. The answer is C, Database.';
+      else msg = '👀 The answer is C, Database.';
+      status.innerHTML = esc(msg) + ' <button class="btn ghost" id="toAns" style="padding:7px 14px;margin-left:6px">Continue to the answer slide →</button> <button class="btn ghost" id="mcqReset" style="padding:7px 14px">↺ Reset</button>';
+      $('#toAns', status).addEventListener('click', next);
+      $('#mcqReset', status).addEventListener('click', () => {
+        done = false; sel = null;
+        opts.forEach(x => { x.classList.remove('sel', 'ok', 'bad'); x.setAttribute('aria-checked', 'false'); });
+        status.textContent = init;
+      });
+    });
+  })();
+
+  /* ---------------- Confetti ---------------- */
+  let confettiRaf = 0;
+  function confetti() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    cancelAnimationFrame(confettiRaf);
+    const cv = $('#confetti'), ctx = cv.getContext('2d');
+    cv.width = innerWidth; cv.height = innerHeight;
+    const colors = ['#38bdf8', '#a78bfa', '#34d399', '#f472b6', '#fbbf24'];
+    const P = Array.from({ length: 140 }, (_, k) => ({ x: innerWidth / 2, y: innerHeight * .6, vx: (Math.sin(k * 12.9898) * 43758.5453 % 1) * 14 - 7 + (k % 2 ? 1 : -1) * 2, vy: -(6 + (k * 7 % 11)), r: 4 + k % 5, c: colors[k % 5], a: k }));
+    let f = 0;
+    (function tick() {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      P.forEach(p => { p.vy += .28; p.x += p.vx; p.y += p.vy; p.a += .2; ctx.fillStyle = p.c; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); ctx.restore(); });
+      if (++f < 150) confettiRaf = requestAnimationFrame(tick); else ctx.clearRect(0, 0, cv.width, cv.height);
+    })();
+  }
+
+  /* ---------------- Fullscreen & timer ---------------- */
+  const fsBtn = $('#fsBtn'), root = document.documentElement;
+  const canFS = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+  if (!canFS) fsBtn.hidden = true; // Fullscreen API unavailable (e.g. iOS Safari)
+  function toggleFS() {
+    if (!canFS) return;
+    const el = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!el) (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+    else (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  }
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
+    const on = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    fsBtn.classList.toggle('on', on); fsBtn.setAttribute('aria-pressed', on);
+    fsBtn.querySelector('.t').textContent = on ? 'Exit' : 'Full screen';
+  }));
+
+  let secs = 0, tInt = null;
+  const timerBtn = $('#timerBtn'), timerTxt = $('#timerTxt');
+  const fmt = n => String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
+  function toggleTimer() {
+    if (tInt) { clearInterval(tInt); tInt = null; timerBtn.classList.remove('on'); timerBtn.setAttribute('aria-pressed', 'false'); timerBtn.querySelector('.ico').textContent = '⏱'; }
+    else { tInt = setInterval(() => { secs++; timerTxt.textContent = fmt(secs); }, 1000); timerBtn.classList.add('on'); timerBtn.setAttribute('aria-pressed', 'true'); timerBtn.querySelector('.ico').textContent = '⏸'; }
+  }
+  $('#timerReset').addEventListener('click', () => { secs = 0; timerTxt.textContent = fmt(0); });
+  timerBtn.addEventListener('click', toggleTimer);
+  fsBtn.addEventListener('click', toggleFS);
+
+  /* ---------------- Global click delegation ---------------- */
+  document.addEventListener('click', e => {
+    const t = e.target;
+    let el;
+    if ((el = t.closest('[data-modal]'))) { openById(el.dataset.modal); return; }
+    if ((el = t.closest('[data-flip]'))) { const on = el.classList.toggle('flipped'); el.setAttribute('aria-pressed', on); return; }
+    if ((el = t.closest('[data-expand]'))) { const on = el.classList.toggle('open'); el.setAttribute('aria-expanded', on); return; }
+    if ((el = t.closest('.ai > button'))) { const on = el.parentElement.classList.toggle('open'); el.setAttribute('aria-expanded', on); return; }
+    if ((el = t.closest('[data-play]'))) { play(el); return; }
+    if ((el = t.closest('[data-confetti]'))) { confetti(); openById('m-final'); return; }
+  });
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    // make role=button elements keyboard operable
+    if ((e.key === 'Enter' || e.key === ' ') && t.matches && t.matches('[role=button][tabindex]')) { e.preventDefault(); t.click(); return; }
+    if (e.key === 'Escape') { if (modalOpen) { e.preventDefault(); closeModal(); } return; }
+    if (modalOpen) { if (e.key === 'Tab') trapFocus(e); return; }
+    if (t.matches && t.matches('input,textarea,select,[contenteditable]')) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const onBtn = t.matches && t.matches('button,[role=button],a');
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'PageUp': e.preventDefault(); prev(); break;
+      case ' ': if (!onBtn) { e.preventDefault(); next(); } break;
+      case 'Home': e.preventDefault(); go(0); break;
+      case 'End': e.preventDefault(); go(N - 1); break;
+      case 'f': case 'F': toggleFS(); break;
+      case 'o': case 'O': openOverview(); break;
+      case 't': case 'T': toggleTimer(); break;
+      case 'q': case 'Q': if (!quizBtn.disabled) openSlideQuiz(); break;
+      case '?': openById('m-session'); break;
+    }
+  });
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  $('#homeBtn').addEventListener('click', openOverview);
+  $('#helpBtn').addEventListener('click', () => openById('m-session'));
+  quizBtn.addEventListener('click', openSlideQuiz);
+  factBtn.addEventListener('click', openFact);
+
+  /* swipe */
+  (function swipe() {
+    const st = $('#stage'); let x0 = 0, y0 = 0;
+    st.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    st.addEventListener('touchend', e => {
+      if (modalOpen) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 70 && Math.abs(dy) < 50) (dx < 0 ? next : prev)();
+    }, { passive: true });
+  })();
+
+  /* ---------------- Init ---------------- */
+  slides.forEach((s, k) => { s.setAttribute('inert', ''); const pg = $('.pg', s); if (pg) pg.textContent = (k + 1) + ' / ' + N; });
+  window.addEventListener('hashchange', () => { if (modalOpen) return; const k = parseInt(location.hash.slice(1), 10); if (k >= 1 && k <= N) go(k - 1); });
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start >= 1 && start <= N ? start - 1 : 0);
+  window.__deck = { go, openById, get cur() { return cur; }, N, MODALS, QUIZ, FACTS };
+})();
+
+</script>
+</body>
+</html>
